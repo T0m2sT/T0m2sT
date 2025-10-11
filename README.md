@@ -1,5 +1,5 @@
 # 💫 About Me:
-Hey, I'm Pedro Tomás Teixeira<br><br>Computer Science student at @FEUP | Cybersecurity Enthusiast | ACM Member<br><br>I'm an engineering student exploring the world of cybersecurity — from ethical hacking and network defense to secure software design.<br>Currently, I'm focused on building a strong technical foundation through my degree, getting involved in ACM activities and collaborative projects.<br>Learning through hands-on security labs and CTF challenges is how I decided to start of my Cibersecurity Journey.<br><br><br>
+Hey, I'm Pedro Tomás Teixeira<br><br>Computer Science student at @FEUP | Cybersecurity Enthusiast | ACM Member<br><br>I'm an engineering student building a strong technical foundation through my degree, getting involved in ACM activities and collaborative projects.<br>Learning through hands-on security labs and CTF challenges is how I chose to explore the world of Cybersecurity.<br><br><br>
 
 
 ## 🌐 Socials:
@@ -21,19 +21,3 @@ Hey, I'm Pedro Tomás Teixeira<br><br>Computer Science student at @FEUP | Cybers
 ---
 [![](https://visitcount.itsvg.in/api?id=T0m2sT&icon=0&color=1)](https://visitcount.itsvg.in)
 
-<!-- Proudly created with GPRM ( https://gprm.itsvg.in ) -->
-
-<!--
-**T0m2sT/T0m2sT** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-
-Here are some ideas to get you started:
-
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
