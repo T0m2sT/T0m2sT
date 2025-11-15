@@ -1,5 +1,12 @@
 # 💫 About Me:
-Hey, I'm Pedro Tomás Teixeira<br><br>CS Student at @FEUP | Cybersecurity Enthusiast | ACM Member | xSTF Member<br><br>I'm an engineering student building a strong technical foundation through my degree, getting involved in ACM activities and collaborative projects. Learning through hands-on security labs and CTF challenges is how I chose to explore the world of Cybersecurity.<br><br>
+Hey, I'm Pedro Tomás Teixeira<br><br>BSc in Informatics and Computer Engineering student @FEUP passionate about Cybersecurity and software development.
+<br><br>As an ACM & xSTF member, I actively participate in:
+
+Collaborative projects and coding competitions
+
+Hands-on security labs and CTF challenges
+
+I am driven to build secure and efficient solutions, explore emerging technologies, and contribute to innovative projects. I’m always eager to connect with professionals, collaborate on meaningful work, and grow as a cybersecurity and software development professional.<br><br>
 
 
 # 💻 Tech Stack:
