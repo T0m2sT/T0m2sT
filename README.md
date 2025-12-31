@@ -1,7 +1,7 @@
-## 💫 About Me:
+# 💫 About Me:
 Hey, I'm **Pedro Tomás Teixeira**<br><br>🎓 BSc in Informatics and Computer Engineering student @ **FEUP**, passionate about **Cybersecurity** and **Software Development**.<br><br>As an **ACM & xSTF member**, I actively participate in:<br>- 🤝 Collaborative projects and coding competitions  <br>- 🔐 Hands-on security labs and CTF challenges  <br><br>I’m driven to build **secure and efficient solutions**, explore emerging technologies, and contribute to innovative projects.  <br>Always eager to connect, collaborate, and grow as a cybersecurity & software development professional.
 
-## 💻 Tech Stack:
+# 💻 Tech Stack:
 ![C](https://img.shields.io/badge/c-%2300599C.svg?style=flat&logo=c&logoColor=white) 
 ![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=flat&logo=c%2B%2B&logoColor=white) 
 ![Python](https://img.shields.io/badge/python-3670A0?style=flat&logo=python&logoColor=ffdd54) 
@@ -15,12 +15,12 @@ Hey, I'm **Pedro Tomás Teixeira**<br><br>🎓 BSc in Informatics and Computer E
 ![Canva](https://img.shields.io/badge/Canva-%2300C4CC.svg?style=flat&logo=Canva&logoColor=white) 
 ![Adobe Photoshop](https://img.shields.io/badge/adobe%20photoshop-%2331A8FF.svg?style=flat&logo=adobe%20photoshop&logoColor=white) 
 
-## 📊 GitHub Stats:
+# 📊 GitHub Stats:
 <p align="center">
   <img alt="stats" src="https://nirzak-streak-stats.vercel.app/?user=T0m2sT&theme=dark&hide_border=false)">
 </p>
 
-## 🧩 Snake Commmits:
+# 🧩 Snake Commmits:
 <p align="center">
   <img alt="github contribution grid snake animation" src="https://raw.githubusercontent.com/grebechi/grebechi/output/github-contribution-grid-snake-dark.svg">
 </p>
