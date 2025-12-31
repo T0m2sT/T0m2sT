@@ -16,13 +16,20 @@ Hey, I'm **Pedro Tomás Teixeira**<br><br>🎓 BSc in Informatics and Computer E
 ![Adobe Photoshop](https://img.shields.io/badge/adobe%20photoshop-%2331A8FF.svg?style=flat&logo=adobe%20photoshop&logoColor=white) 
 
 # 📊 GitHub Stats:
-<p align="center">
+<p align="left">
   <img alt="stats" src="https://nirzak-streak-stats.vercel.app/?user=T0m2sT&theme=dark&hide_border=false)">
 </p>
 
+# 🔝 Top Contributed Repo:
+<p align="left">
+  <img alt="Top Contributed Repo" src="https://github-contributor-stats.vercel.app/api?username=T0m2sT&limit=5&theme=darcula&combine_all_yearly_contributions=true">
+</p>
+
 # 🧩 Snake Commmits:
-<p align="center">
+<p align="left">
   <img alt="github contribution grid snake animation" src="https://raw.githubusercontent.com/grebechi/grebechi/output/github-contribution-grid-snake-dark.svg">
 </p>
 
 <p align="left"> <img src="https://komarev.com/ghpvc/?username=T0m2sT&label=Profile%20views&color=0e75b6&style=flat" alt="T0m2sT" /> </p>
+
+
