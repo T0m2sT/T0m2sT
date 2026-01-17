@@ -17,12 +17,7 @@ Hey, I'm **Pedro Tomás Teixeira**<br><br>🎓 BSc in Informatics and Computer E
 
 # 📊 GitHub Stats:
 <p align="left">
-  <img alt="stats" src="https://nirzak-streak-stats.vercel.app/?user=T0m2sT&theme=dark&hide_border=false)">
-</p>
-
-# 🔝 Top Contributed Repo:
-<p align="left">
-  <img alt="Top Contributed Repo" src="https://github-contributor-stats.vercel.app/api?username=T0m2sT&limit=5&theme=darcula&combine_all_yearly_contributions=true">
+  <img alt="stats" src="https://nirzak-streak-stats.vercel.app/?user=T0m2sT&theme=highcontrast&hide_border=false)">
 </p>
 
 # 🧩 Snake Commmits:
