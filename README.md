@@ -27,7 +27,7 @@ BSc student in Informatics and Computer Engineering at FEUP focused on software 
 
 ## 🧩 Selected Project
 
-### 🎮 [Bob, the Destructor — 2D Game Project](https://github.com/T0m2sT/Bob_The_Destructor?tab=readme-ov-file#ldts_t04_g04---bob-the-destructor)
+### 🎮 [Bob, the Destructor — 2D Game Project](https://github.com/T0m2sT/Bob_The_Destructor)
 **Tech:** Java, OOP, Design Patterns, Testing  
 
 Academic project focused on **software architecture and code quality**, not just gameplay.
