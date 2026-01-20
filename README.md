@@ -56,3 +56,5 @@ Academic project focused on **software architecture and code quality**, not just
 - Software architecture and design patterns  
 - Low-level reasoning (memory, performance, state machines)  
 - Writing clear technical documentation
+
+[![Profile views](https://komarev.com/ghpvc/?username=T0m2sT&color=orange&style=flat)](https://youtu.be/xvFZjo5PgG0?si=rAnsXyomLtXlbEyZ)
