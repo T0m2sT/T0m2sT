@@ -1,6 +1,6 @@
 # I’m Pedro Tomás Teixeira
-BSc student in Informatics and Computer Engineering at FEUP focused on software architecture and correctness with an interest in cybersecurity.
-
+  BSc student in Informatics and Computer Engineering at FEUP, developing projects across game development and algorithmic trading systems, with a strong interest in cybersecurity.
+  
 ## 🧠 Focus
 - Strong fundamentals and correctness  
 - Clear architecture and separation of concerns  
