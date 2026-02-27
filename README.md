@@ -20,10 +20,10 @@
 - Java, PHP
 
 ### Web Fundamentals
-- HTML
+- HTML, CSS, JavaScript
 
 ### Tooling
-- Git, GitHub, Linux
+- Git, GitHub
 
 ## 🧩 Selected Project
 
