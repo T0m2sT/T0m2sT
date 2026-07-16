@@ -320,7 +320,7 @@ async function buildHighlightedProjects(username, spec) {
   // title and the meta line - not the full card height, so a short
   // description doesn't drift toward the card's geometric middle and leave
   // lopsided gaps above/below
-  const heroContentTop = PAD + 35 + 27;
+  const heroContentTop = PAD + 26 + 27;
   const heroContentBottom = HERO_H - PAD - 4 - 28;
   const heroDescStartY = (heroContentTop + heroContentBottom) / 2 - heroDescBlockH / 2;
   const heroDescSvg = heroLines
@@ -336,11 +336,11 @@ async function buildHighlightedProjects(username, spec) {
   // monospace font the viewer's browser actually picked. Painted before the
   // title text (not after) so the text sits on top of the line, not the
   // other way around, wherever a descender dips into it.
-  const HERO_TITLE_SIZE = 37;
+  const HERO_TITLE_SIZE = 28;
   const heroTitleW = Math.round(hero.name.length * HERO_TITLE_SIZE * 0.6);
   const heroSvg = `<rect width="${HERO_W}" height="${HERO_H}" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/><rect width="${HERO_W}" height="${HERO_H}" rx="16" fill="url(#cardSheen)"/>
-<rect x="${PAD}" y="${PAD + 39}" width="${heroTitleW}" height="3" rx="1.5" fill="#4f8cff"/>
-<text x="${PAD}" y="${PAD + 35}" textLength="${heroTitleW}" lengthAdjust="spacingAndGlyphs" style="font-size:${HERO_TITLE_SIZE}px;font-weight:800;letter-spacing:-0.01em;fill:#e7ebf3">${escXml(hero.name)}</text>
+<rect x="${PAD}" y="${PAD + 30}" width="${heroTitleW}" height="3" rx="1.5" fill="#4f8cff"/>
+<text x="${PAD}" y="${PAD + 26}" textLength="${heroTitleW}" lengthAdjust="spacingAndGlyphs" style="font-size:${HERO_TITLE_SIZE}px;font-weight:800;letter-spacing:-0.01em;fill:#e7ebf3">${escXml(hero.name)}</text>
 ${heroDescSvg}
 <text x="${PAD}" y="${HERO_H - PAD - 4}" style="font-size:14px;fill:#4f8cff;font-weight:700">${escXml(heroMeta)}</text>`;
 

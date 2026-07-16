@@ -430,12 +430,12 @@
     <g transform="translate(0, 34)">
       <!-- GH-PROJECTS:BEGIN -->
 <rect width="470" height="340" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/><rect width="470" height="340" rx="16" fill="url(#cardSheen)"/>
-<rect x="24" y="63" width="200" height="3" rx="1.5" fill="#4f8cff"/>
-<text x="24" y="59" textLength="200" lengthAdjust="spacingAndGlyphs" style="font-size:37px;font-weight:800;letter-spacing:-0.01em;fill:#e7ebf3">The Forge</text>
-<text x="24" y="144.5" style="font-size:18px;fill:#c9d1d9">A gym management website built around</text>
-<text x="24" y="171.5" style="font-size:18px;fill:#c9d1d9">three roles - members book classes,</text>
-<text x="24" y="198.5" style="font-size:18px;fill:#c9d1d9">trainers manage schedules, admins run</text>
-<text x="24" y="225.5" style="font-size:18px;fill:#c9d1d9">the show.</text>
+<rect x="24" y="54" width="151" height="3" rx="1.5" fill="#4f8cff"/>
+<text x="24" y="50" textLength="151" lengthAdjust="spacingAndGlyphs" style="font-size:28px;font-weight:800;letter-spacing:-0.01em;fill:#e7ebf3">The Forge</text>
+<text x="24" y="140.0" style="font-size:18px;fill:#c9d1d9">A gym management website built around</text>
+<text x="24" y="167.0" style="font-size:18px;fill:#c9d1d9">three roles - members book classes,</text>
+<text x="24" y="194.0" style="font-size:18px;fill:#c9d1d9">trainers manage schedules, admins run</text>
+<text x="24" y="221.0" style="font-size:18px;fill:#c9d1d9">the show.</text>
 <text x="24" y="312" style="font-size:14px;fill:#4f8cff;font-weight:700">PHP · CSS · JavaScript · updated 2d ago</text>
 <g transform="translate(490, 0)">
 <g transform="translate(0, 0)">
