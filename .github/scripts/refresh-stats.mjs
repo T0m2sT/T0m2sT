@@ -61,7 +61,12 @@ async function buildLinesOfCode(username) {
   if (!any) return null;
 
   const net = additions - deletions;
-  return `${net.toLocaleString("en-US")} (${additions.toLocaleString("en-US")}++, ${deletions.toLocaleString("en-US")}--)`;
+  // ++ / -- colored like a diff (green additions, red deletions) instead of
+  // plain text, so the row reads at a glance same as the candlestick chart
+  const net_ = net.toLocaleString("en-US");
+  const add_ = additions.toLocaleString("en-US");
+  const del_ = deletions.toLocaleString("en-US");
+  return `${net_} (<tspan fill="#3ddc84">${add_}++</tspan>, <tspan fill="#ff5c5c">${del_}--</tspan>)`;
 }
 
 // GH-STATS is now a custom "ledger" widget instead of the embedded default
