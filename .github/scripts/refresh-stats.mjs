@@ -170,8 +170,14 @@ async function buildContributionsQuote(username) {
     const m = raw.slice(idx).match(/<text[^>]*>\s*([\s\S]*?)\s*<\/text>/);
     return m ? m[1].trim() : "—";
   };
-  const total = grabAfter("<!-- Total Contributions big number -->");
   const longest = grabAfter("<!-- Longest Streak big number -->");
+
+  // streak-stats' own "Total Contributions" is cached at their CDN for 24h
+  // (cache-control: max-age=86400), which visibly lagged GitHub's live count
+  // by several contributions - summing our own already-fetched calendar
+  // series gives the true live total instead.
+  const series = await fetchContributionSeries(username);
+  const total = series ? series.reduce((sum, d) => sum + d.count, 0).toLocaleString("en-US") : grabAfter("<!-- Total Contributions big number -->");
 
   return { total, longest };
 }
