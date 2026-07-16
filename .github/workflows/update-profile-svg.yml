@@ -19,6 +19,8 @@ jobs:
           node-version: 20
 
       - name: Refresh GH-STATS / GH-LANGS / GH-STREAK / GH-ACTIVITY cards in profile.svg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node .github/scripts/refresh-stats.mjs
 
       - name: Commit if changed

@@ -7,6 +7,63 @@ const THEME = "&hide_border=true&bg_color=00000000&title_color=4f8cff&icon_color
 
 const CARDS = [];
 
+// GitHub's API works unauthenticated (60 req/hour), but the per-repo
+// contributor-stats calls used for the lines-of-code widget can burn through
+// that fast on their own - authenticating with the Actions run's own
+// GITHUB_TOKEN (no secret to set up, it's automatic in every workflow run)
+// raises that to 5,000/hour. Falls back to unauthenticated for local runs.
+const GH_TOKEN = process.env.GITHUB_TOKEN || process.env.GH_TOKEN || "";
+function ghHeaders() {
+  const headers = { "User-Agent": "profile-svg-refresh", Accept: "application/vnd.github+json" };
+  if (GH_TOKEN) headers.Authorization = `Bearer ${GH_TOKEN}`;
+  return headers;
+}
+
+// the contributor-stats endpoint computes lazily - a cold repo answers 202
+// while GitHub builds the weekly add/delete breakdown in the background, so
+// we poll a few times before giving up on that one repo.
+async function fetchContributorStats(username, repo) {
+  for (let attempt = 0; attempt < 6; attempt++) {
+    const res = await fetch(`https://api.github.com/repos/${username}/${repo}/stats/contributors`, {
+      headers: ghHeaders(),
+    });
+    if (res.status === 200) return res.json();
+    if (res.status !== 202) return null;
+    await new Promise((r) => setTimeout(r, 2500));
+  }
+  return null;
+}
+
+// real "lines of code" - additions/deletions summed from GitHub's own
+// per-repo contributor stats (not a clone + git log, so it works without a
+// token and stays cheap enough to run daily), across every owned, non-fork
+// repo, filtered down to commits actually authored by this user.
+async function buildLinesOfCode(username) {
+  const reposRes = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&type=owner`, {
+    headers: ghHeaders(),
+  });
+  if (!reposRes.ok) return null;
+  const repos = (await reposRes.json()).filter((r) => !r.fork);
+
+  const results = await Promise.all(repos.map((r) => fetchContributorStats(username, r.name)));
+
+  let additions = 0, deletions = 0, any = false;
+  for (const stats of results) {
+    if (!Array.isArray(stats)) continue;
+    const mine = stats.find((c) => c.author && c.author.login?.toLowerCase() === username.toLowerCase());
+    if (!mine) continue;
+    any = true;
+    for (const w of mine.weeks) {
+      additions += w.a;
+      deletions += w.d;
+    }
+  }
+  if (!any) return null;
+
+  const net = additions - deletions;
+  return `${net.toLocaleString("en-US")} (${additions.toLocaleString("en-US")}++, ${deletions.toLocaleString("en-US")}--)`;
+}
+
 // GH-STATS is now a custom "ledger" widget instead of the embedded default
 // card - real numbers, parsed out of github-readme-stats' own SVG (so it
 // stays accurate/auto-updating) rather than displaying that card's default
@@ -24,6 +81,7 @@ async function buildStatsLedger(username, width) {
   };
   const rankMatch = raw.match(/class="rank-text">[\s\S]*?<text[^>]*>\s*([^<]+?)\s*<\/text>/);
   const rank = rankMatch ? rankMatch[1].trim() : "—";
+  const loc = await buildLinesOfCode(username);
 
   const rows = [
     ["Total stars", grab("stars")],
@@ -32,14 +90,15 @@ async function buildStatsLedger(username, width) {
     ["Issues", grab("issues")],
     ["Contributed to", grab("contribs")],
     ["Rank", rank],
+    ["Lines of code", loc || "—"],
   ];
 
-  const rowH = 28;
+  const rowH = 24;
   const lines = rows
     .map(([k, v], i) => {
       const y = i * rowH;
       const bg = i % 2 === 0 ? `<rect x="-6" y="${y - 4}" width="${width + 12}" height="${rowH}" rx="6" fill="#ffffff08"/>` : "";
-      return `${bg}<text x="0" y="${y + 16}" style="font-size:13px;fill:#8b93a3">${k}</text><text x="${width}" y="${y + 16}" text-anchor="end" style="font-size:14.5px;font-weight:700">${v}</text>`;
+      return `${bg}<text x="0" y="${y + 15}" style="font-size:13px;fill:#8b93a3">${k}</text><text x="${width}" y="${y + 15}" text-anchor="end" style="font-size:13.5px;font-weight:700">${v}</text>`;
     })
     .join("\n");
 
@@ -160,7 +219,7 @@ function relativeTime(iso) {
 
 async function fetchRepo(username, repo) {
   const res = await fetch(`https://api.github.com/repos/${username}/${repo}`, {
-    headers: { "User-Agent": "profile-svg-refresh", Accept: "application/vnd.github+json" },
+    headers: ghHeaders(),
   });
   if (!res.ok) {
     console.warn(`[skip] repo ${repo}: ${res.status}`);
@@ -171,7 +230,7 @@ async function fetchRepo(username, repo) {
 
 async function fetchTopLanguages(username, repo, limit = 3) {
   const res = await fetch(`https://api.github.com/repos/${username}/${repo}/languages`, {
-    headers: { "User-Agent": "profile-svg-refresh", Accept: "application/vnd.github+json" },
+    headers: ghHeaders(),
   });
   if (!res.ok) return [];
   const data = await res.json();
