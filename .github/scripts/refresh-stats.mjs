@@ -19,6 +19,53 @@ function ghHeaders() {
   return headers;
 }
 
+// the range tabs' from=/to= query params were previously hand-typed dates
+// that froze the day this file was generated - now computed off today's
+// real date every run, so the links stay accurate instead of quietly
+// drifting stale.
+function buildRangeTabs(username) {
+  const today = new Date();
+  const fmt = (d) => d.toISOString().slice(0, 10);
+  const to = fmt(today);
+  const monthsAgo = (n) => {
+    const d = new Date(today);
+    d.setUTCMonth(d.getUTCMonth() - n);
+    return fmt(d);
+  };
+  const yearsAgo = (n) => {
+    const d = new Date(today);
+    d.setUTCFullYear(d.getUTCFullYear() - n);
+    return fmt(d);
+  };
+
+  // active tab matches the activity chart's actual plotted window (30 days)
+  const ranges = [
+    { label: "1M", from: monthsAgo(1), active: true },
+    { label: "3M", from: monthsAgo(3), active: false },
+    { label: "6M", from: monthsAgo(6), active: false },
+    { label: "1Y", from: yearsAgo(1), active: false },
+  ];
+
+  const tabW = 46, gap = 6, tabH = 24;
+  const tabs = ranges.map((r, i) => {
+    const x = i * (tabW + gap);
+    const fill = r.active ? "#4f8cff" : "transparent";
+    const textClass = r.active ? "tab-text-active" : "tab-text";
+    return `<a class="tab-link" xlink:href="https://github.com/${username}?tab=overview&amp;from=${r.from}&amp;to=${to}">
+        <rect class="tab-hit" x="${x}" y="0" width="${tabW}" height="${tabH}" rx="12" fill="${fill}"/>
+        <text x="${x + tabW / 2}" y="16" text-anchor="middle" class="${textClass}">${r.label}</text>
+      </a>`;
+  });
+
+  const allX = ranges.length * (tabW + gap);
+  tabs.push(`<a class="tab-link" xlink:href="https://github.com/${username}">
+        <rect class="tab-hit" x="${allX}" y="0" width="${tabW}" height="${tabH}" rx="12" fill="transparent"/>
+        <text x="${allX + tabW / 2}" y="16" text-anchor="middle" class="tab-text">ALL</text>
+      </a>`);
+
+  return tabs.join("\n      ");
+}
+
 // the contributor-stats endpoint computes lazily - a cold repo answers 202
 // while GitHub builds the weekly add/delete breakdown in the background, so
 // we poll a few times before giving up on that one repo.
@@ -519,6 +566,22 @@ async function main() {
     svg = svg.slice(0, beginIdx) + replacement + svg.slice(endIdx + endTag.length);
     changed = true;
     console.log(`[ok] ${card.marker} refreshed (${scoped.width}x${scoped.height})`);
+  }
+
+  {
+    const beginTag = `<!-- GH-TABS:BEGIN -->`;
+    const endTag = `<!-- GH-TABS:END -->`;
+    const beginIdx = svg.indexOf(beginTag);
+    const endIdx = svg.indexOf(endTag);
+    if (beginIdx === -1 || endIdx === -1) {
+      console.warn("[skip] markers for GH-TABS not found in " + SVG_PATH);
+    } else {
+      const tabs = buildRangeTabs(USERNAME);
+      const replacement = `${beginTag}\n      ${tabs}\n      ${endTag}`;
+      svg = svg.slice(0, beginIdx) + replacement + svg.slice(endIdx + endTag.length);
+      changed = true;
+      console.log("[ok] GH-TABS refreshed (dates recomputed from today)");
+    }
   }
 
   {

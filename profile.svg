@@ -299,19 +299,20 @@
     <g transform="translate(580, 28)">
       <!-- GH-MONTHSTAT:BEGIN -->
 <text x="0" y="0" text-anchor="end" style="font-size:10px;fill:#6c7689;letter-spacing:.05em">JUL</text>
-<text x="0" y="26" text-anchor="end" style="font-size:26px;font-weight:800;fill:#e7ebf3">37</text>
-<text x="0" y="44" text-anchor="end" style="font-size:11px;font-weight:700;fill:#4f8cff">3% of total ▲</text>
+<text x="0" y="26" text-anchor="end" style="font-size:26px;font-weight:800;fill:#e7ebf3">38</text>
+<text x="0" y="44" text-anchor="end" style="font-size:11px;font-weight:700;fill:#4f8cff">3.1% of total ▲</text>
 <!-- GH-MONTHSTAT:END -->
     </g>
     <g transform="translate(20, 78)">
       <!-- range tabs: real <a> links, but GitHub renders this file via
            <img src="profile.svg">, which strips all interactivity (no
            script, no in-image navigation) - see note below -->
-      <a class="tab-link" xlink:href="https://github.com/T0m2sT?tab=overview&amp;from=2026-06-09&amp;to=2026-07-16">
+      <!-- GH-TABS:BEGIN -->
+      <a class="tab-link" xlink:href="https://github.com/T0m2sT?tab=overview&amp;from=2026-06-16&amp;to=2026-07-16">
         <rect class="tab-hit" x="0" y="0" width="46" height="24" rx="12" fill="#4f8cff"/>
         <text x="23" y="16" text-anchor="middle" class="tab-text-active">1M</text>
       </a>
-      <a class="tab-link" xlink:href="https://github.com/T0m2sT?tab=overview&amp;from=2026-04-17&amp;to=2026-07-16">
+      <a class="tab-link" xlink:href="https://github.com/T0m2sT?tab=overview&amp;from=2026-04-16&amp;to=2026-07-16">
         <rect class="tab-hit" x="52" y="0" width="46" height="24" rx="12" fill="transparent"/>
         <text x="75" y="16" text-anchor="middle" class="tab-text">3M</text>
       </a>
@@ -327,6 +328,7 @@
         <rect class="tab-hit" x="208" y="0" width="46" height="24" rx="12" fill="transparent"/>
         <text x="231" y="16" text-anchor="middle" class="tab-text">ALL</text>
       </a>
+      <!-- GH-TABS:END -->
     </g>
     <g transform="translate(20, 118)">
       <!-- GH-ACTIVITY:BEGIN -->
@@ -337,8 +339,8 @@
       <stop offset="100%" stop-color="#4f8cff" stop-opacity="0"/>
     </linearGradient>
   </defs>
-  <polygon points="0.0,198.0 19.3,198.0 38.6,198.0 57.9,198.0 77.2,198.0 96.6,198.0 115.9,198.0 135.2,198.0 154.5,198.0 173.8,185.2 193.1,185.2 212.4,168.1 231.7,168.1 251.0,168.1 270.3,168.1 289.7,168.1 309.0,168.1 328.3,168.1 347.6,168.1 366.9,168.1 386.2,168.1 405.5,168.1 424.8,168.1 444.1,168.1 463.4,142.5 482.8,95.5 502.1,95.5 521.4,57.0 540.7,31.4 560.0,10.0 560,202 0,202" fill="url(#activityFill)"/>
-  <polyline points="0.0,198.0 19.3,198.0 38.6,198.0 57.9,198.0 77.2,198.0 96.6,198.0 115.9,198.0 135.2,198.0 154.5,198.0 173.8,185.2 193.1,185.2 212.4,168.1 231.7,168.1 251.0,168.1 270.3,168.1 289.7,168.1 309.0,168.1 328.3,168.1 347.6,168.1 366.9,168.1 386.2,168.1 405.5,168.1 424.8,168.1 444.1,168.1 463.4,142.5 482.8,95.5 502.1,95.5 521.4,57.0 540.7,31.4 560.0,10.0" fill="none" stroke="#4f8cff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="0.0,198.0 19.3,198.0 38.6,198.0 57.9,198.0 77.2,198.0 96.6,198.0 115.9,198.0 135.2,198.0 154.5,198.0 173.8,185.5 193.1,185.5 212.4,168.8 231.7,168.8 251.0,168.8 270.3,168.8 289.7,168.8 309.0,168.8 328.3,168.8 347.6,168.8 366.9,168.8 386.2,168.8 405.5,168.8 424.8,168.8 444.1,168.8 463.4,143.7 482.8,97.7 502.1,97.7 521.4,60.1 540.7,35.1 560.0,10.0 560,202 0,202" fill="url(#activityFill)"/>
+  <polyline points="0.0,198.0 19.3,198.0 38.6,198.0 57.9,198.0 77.2,198.0 96.6,198.0 115.9,198.0 135.2,198.0 154.5,198.0 173.8,185.5 193.1,185.5 212.4,168.8 231.7,168.8 251.0,168.8 270.3,168.8 289.7,168.8 309.0,168.8 328.3,168.8 347.6,168.8 366.9,168.8 386.2,168.8 405.5,168.8 424.8,168.8 444.1,168.8 463.4,143.7 482.8,97.7 502.1,97.7 521.4,60.1 540.7,35.1 560.0,10.0" fill="none" stroke="#4f8cff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
   <circle cx="560" cy="10" r="4" fill="#4f8cff"/>
   <circle cx="560" cy="10" r="8" fill="#4f8cff" opacity="0.25"/>
 </svg>
@@ -380,7 +382,7 @@
 <line x1="475.3" y1="139.0" x2="475.3" y2="139.0" stroke="#3ddc84" stroke-width="1.5"/><rect x="466.7" y="138.3" width="17.3" height="1.5" rx="1" fill="#3ddc84"/>
 <line x1="498.7" y1="131.5" x2="498.7" y2="139.0" stroke="#ff5c5c" stroke-width="1.5"/><rect x="490.0" y="133.4" width="17.3" height="5.6" rx="1" fill="#ff5c5c"/>
 <line x1="522.0" y1="139.0" x2="522.0" y2="139.0" stroke="#3ddc84" stroke-width="1.5"/><rect x="513.3" y="138.3" width="17.3" height="1.5" rx="1" fill="#3ddc84"/>
-<line x1="545.3" y1="118.3" x2="545.3" y2="139.0" stroke="#3ddc84" stroke-width="1.5"/><rect x="536.7" y="129.6" width="17.3" height="9.4" rx="1" fill="#3ddc84"/>
+<line x1="545.3" y1="118.3" x2="545.3" y2="139.0" stroke="#3ddc84" stroke-width="1.5"/><rect x="536.7" y="127.7" width="17.3" height="11.3" rx="1" fill="#3ddc84"/>
 </g>
 <!-- GH-STREAK:END -->
   </g>
@@ -392,7 +394,7 @@
     <g transform="translate(20, 44)">
       <!-- GH-STATS:BEGIN -->
 <rect x="-6" y="-4" width="442" height="24" rx="6" fill="#ffffff08"/><text x="0" y="15" style="font-size:13px;fill:#8b93a3">Total stars</text><text x="430" y="15" text-anchor="end" style="font-size:13.5px;font-weight:700">1</text>
-<text x="0" y="39" style="font-size:13px;fill:#8b93a3">Commits (2026)</text><text x="430" y="39" text-anchor="end" style="font-size:13.5px;font-weight:700">721</text>
+<text x="0" y="39" style="font-size:13px;fill:#8b93a3">Commits (2026)</text><text x="430" y="39" text-anchor="end" style="font-size:13.5px;font-weight:700">717</text>
 <rect x="-6" y="44" width="442" height="24" rx="6" fill="#ffffff08"/><text x="0" y="63" style="font-size:13px;fill:#8b93a3">Pull requests</text><text x="430" y="63" text-anchor="end" style="font-size:13.5px;font-weight:700">11</text>
 <text x="0" y="87" style="font-size:13px;fill:#8b93a3">Issues</text><text x="430" y="87" text-anchor="end" style="font-size:13.5px;font-weight:700">0</text>
 <rect x="-6" y="92" width="442" height="24" rx="6" fill="#ffffff08"/><text x="0" y="111" style="font-size:13px;fill:#8b93a3">Contributed to</text><text x="430" y="111" text-anchor="end" style="font-size:13.5px;font-weight:700">3</text>
