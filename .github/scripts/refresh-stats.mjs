@@ -529,7 +529,7 @@ async function main() {
     if (beginIdx === -1 || endIdx === -1) {
       console.warn("[skip] markers for GH-ACTIVITY not found in " + SVG_PATH);
     } else {
-      const chart = await buildActivityChart(USERNAME, 560, 202);
+      const chart = await buildActivityChart(USERNAME, 560, 202, 30);
       if (!chart) {
         console.warn("[skip] GH-ACTIVITY: build failed, keeping existing content");
       } else {
