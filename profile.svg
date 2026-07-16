@@ -385,12 +385,12 @@
     <g transform="translate(20, 44)">
       <!-- GH-STATS:BEGIN -->
 <rect x="-6" y="-4" width="442" height="25" rx="6" fill="#ffffff08"/><text x="0" y="16" style="font-size:14.5px;fill:#8b93a3">Total stars</text><text x="430" y="16" text-anchor="end" style="font-size:15px;font-weight:700">1</text>
-<text x="0" y="41" style="font-size:14.5px;fill:#8b93a3">Commits (2026)</text><text x="430" y="41" text-anchor="end" style="font-size:15px;font-weight:700">725</text>
+<text x="0" y="41" style="font-size:14.5px;fill:#8b93a3">Commits (2026)</text><text x="430" y="41" text-anchor="end" style="font-size:15px;font-weight:700">726</text>
 <rect x="-6" y="46" width="442" height="25" rx="6" fill="#ffffff08"/><text x="0" y="66" style="font-size:14.5px;fill:#8b93a3">Pull requests</text><text x="430" y="66" text-anchor="end" style="font-size:15px;font-weight:700">11</text>
 <text x="0" y="91" style="font-size:14.5px;fill:#8b93a3">Issues</text><text x="430" y="91" text-anchor="end" style="font-size:15px;font-weight:700">0</text>
 <rect x="-6" y="96" width="442" height="25" rx="6" fill="#ffffff08"/><text x="0" y="116" style="font-size:14.5px;fill:#8b93a3">Contributed to</text><text x="430" y="116" text-anchor="end" style="font-size:15px;font-weight:700">3</text>
 <text x="0" y="141" style="font-size:14.5px;fill:#8b93a3">Rank</text><text x="430" y="141" text-anchor="end" style="font-size:15px;font-weight:700">A+</text>
-<rect x="-6" y="146" width="442" height="25" rx="6" fill="#ffffff08"/><text x="0" y="166" style="font-size:14.5px;fill:#8b93a3">Lines of code</text><text x="430" y="166" text-anchor="end" style="font-size:15px;font-weight:700">169,692 (<tspan fill="#3ddc84">203,728++</tspan>, <tspan fill="#ff5c5c">34,036--</tspan>)</text>
+<rect x="-6" y="146" width="442" height="25" rx="6" fill="#ffffff08"/><text x="0" y="166" style="font-size:14.5px;fill:#8b93a3">Lines of code</text><text x="430" y="166" text-anchor="end" style="font-size:15px;font-weight:700">169,570 (<tspan fill="#3ddc84">203,818++</tspan>, <tspan fill="#ff5c5c">34,248--</tspan>)</text>
 <!-- GH-STATS:END -->
     </g>
 
@@ -440,8 +440,8 @@
 <g transform="translate(490, 0)">
 <g transform="translate(0, 0)">
   <rect width="470" height="160" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/><rect width="470" height="160" rx="16" fill="url(#cardSheen)"/>
-  <rect x="20" y="37" width="251" height="3" rx="1.5" fill="#4f8cff"/>
-  <text x="20" y="34" textLength="251" lengthAdjust="spacingAndGlyphs" style="font-size:22px;font-weight:700;fill:#e7ebf3">Bob the Destructor</text>
+  <rect x="20" y="37" width="238" height="3" rx="1.5" fill="#4f8cff"/>
+  <text x="20" y="34" textLength="238" lengthAdjust="spacingAndGlyphs" style="font-size:22px;font-weight:700;fill:#e7ebf3">Bob the Destructor</text>
   <text x="20" y="79.5" style="font-size:14.5px;fill:#c9d1d9">Five caves, one miner, endless ore - how deep can</text>
 <text x="20" y="100.5" style="font-size:14.5px;fill:#c9d1d9">you dig?</text>
   <text x="20" y="142" style="font-size:12px;fill:#4f8cff;font-weight:700">Java · ★ 1</text>
