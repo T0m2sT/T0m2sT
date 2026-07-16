@@ -1,0 +1,601 @@
+import { readFile, writeFile } from "node:fs/promises";
+
+const USERNAME = process.env.GH_STATS_USERNAME || "T0m2sT";
+const SVG_PATH = process.env.PROFILE_SVG_PATH || "profile.svg";
+
+const THEME = "&hide_border=true&bg_color=00000000&title_color=4f8cff&icon_color=4f8cff&text_color=e7ebf3";
+
+const CARDS = [];
+
+// GH-STATS is now a custom "ledger" widget instead of the embedded default
+// card - real numbers, parsed out of github-readme-stats' own SVG (so it
+// stays accurate/auto-updating) rather than displaying that card's default
+// icon-row look directly.
+async function buildStatsLedger(username, width) {
+  const raw = await fetchFirstOk([
+    `https://github-readme-stats.vercel.app/api?username=${username}&show_icons=true`,
+    `https://github-readme-stats-eight-theta.vercel.app/api?username=${username}&show_icons=true`,
+  ]);
+  if (!raw) return null;
+
+  const grab = (testid) => {
+    const m = raw.match(new RegExp(`data-testid="${testid}"[^>]*>\\s*([^<]+?)\\s*<`));
+    return m ? m[1].trim() : "—";
+  };
+  const rankMatch = raw.match(/class="rank-text">[\s\S]*?<text[^>]*>\s*([^<]+?)\s*<\/text>/);
+  const rank = rankMatch ? rankMatch[1].trim() : "—";
+
+  const rows = [
+    ["Total stars", grab("stars")],
+    ["Commits (2026)", grab("commits")],
+    ["Pull requests", grab("prs")],
+    ["Issues", grab("issues")],
+    ["Contributed to", grab("contribs")],
+    ["Rank", rank],
+  ];
+
+  const rowH = 28;
+  const lines = rows
+    .map(([k, v], i) => {
+      const y = i * rowH;
+      const bg = i % 2 === 0 ? `<rect x="-6" y="${y - 4}" width="${width + 12}" height="${rowH}" rx="6" fill="#ffffff08"/>` : "";
+      return `${bg}<text x="0" y="${y + 16}" style="font-size:13px;fill:#8b93a3">${k}</text><text x="${width}" y="${y + 16}" text-anchor="end" style="font-size:14.5px;font-weight:700">${v}</text>`;
+    })
+    .join("\n");
+
+  return lines;
+}
+
+// GH-STREAK is now a custom "quote" widget - real total/streak numbers
+// parsed from streak-stats' own SVG, paired with a real candlestick chart
+// (see buildCandlestickChart) instead of streak-stats' default look.
+async function buildContributionsQuote(username) {
+  const raw = await fetchFirstOk([`https://streak-stats.demolab.com/?user=${username}`]);
+  if (!raw) return null;
+
+  const grabAfter = (comment) => {
+    const idx = raw.indexOf(comment);
+    if (idx === -1) return "—";
+    const m = raw.slice(idx).match(/<text[^>]*>\s*([\s\S]*?)\s*<\/text>/);
+    return m ? m[1].trim() : "—";
+  };
+  const total = grabAfter("<!-- Total Contributions big number -->");
+  const longest = grabAfter("<!-- Longest Streak big number -->");
+
+  return { total, longest };
+}
+
+// commits-as-candlesticks: the daily contribution series bucketed into
+// weeks and drawn as real OHLC bars (open/close = first/last day of the
+// week, wick = the week's high/low) - the most literally "stock chart"
+// reading of the same real data GH-ACTIVITY plots as a running total.
+async function buildCandlestickChart(username, chartWidth, chartHeight, weeks = 24) {
+  const series = await fetchContributionSeries(username);
+  if (!series) return null;
+
+  const recent = series.slice(-weeks * 7);
+  const buckets = [];
+  for (let i = 0; i < recent.length; i += 7) {
+    const chunk = recent.slice(i, i + 7).map((d) => d.count);
+    if (!chunk.length) continue;
+    buckets.push({ open: chunk[0], close: chunk[chunk.length - 1], high: Math.max(...chunk), low: Math.min(...chunk) });
+  }
+  if (!buckets.length) return null;
+
+  const maxVal = Math.max(1, ...buckets.map((b) => b.high));
+  const gap = 6;
+  const cw = chartWidth / buckets.length - gap;
+  const bars = buckets
+    .map((b, i) => {
+      const x = i * (cw + gap);
+      const up = b.close >= b.open;
+      const color = up ? "#3ddc84" : "#ff5c5c";
+      const yHigh = chartHeight - (b.high / maxVal) * chartHeight;
+      const yLow = chartHeight - (b.low / maxVal) * chartHeight;
+      const bodyTopVal = Math.max(b.open, b.close);
+      const bodyBotVal = Math.min(b.open, b.close);
+      let bodyTop = chartHeight - (bodyTopVal / maxVal) * chartHeight;
+      let bodyH = ((bodyTopVal - bodyBotVal) / maxVal) * chartHeight;
+      if (bodyH < 1.5) {
+        bodyTop -= (1.5 - bodyH) / 2;
+        bodyH = 1.5;
+      }
+      return `<line x1="${(x + cw / 2).toFixed(1)}" y1="${yHigh.toFixed(1)}" x2="${(x + cw / 2).toFixed(1)}" y2="${yLow.toFixed(1)}" stroke="${color}" stroke-width="1.5"/><rect x="${x.toFixed(1)}" y="${bodyTop.toFixed(1)}" width="${cw.toFixed(1)}" height="${bodyH.toFixed(1)}" rx="1" fill="${color}"/>`;
+    })
+    .join("\n");
+
+  return bars;
+}
+
+// GH-PROJECTS: the "Highlighted projects" spotlight - real repo data (name,
+// description, language, stars, last push) fetched live from the GitHub API,
+// not hand-typed, so it stays accurate as the repos change.
+function wrapText(text, maxChars, maxLines) {
+  const words = (text || "").split(/\s+/).filter(Boolean);
+  const lines = [];
+  let cur = "";
+  for (const w of words) {
+    const next = cur ? `${cur} ${w}` : w;
+    if (next.length > maxChars) {
+      if (cur) lines.push(cur);
+      cur = w;
+      if (lines.length === maxLines) break;
+    } else {
+      cur = next;
+    }
+  }
+  const consumedAll = lines.length < maxLines;
+  if (consumedAll && cur) lines.push(cur);
+  const truncated = !consumedAll;
+  if (truncated && lines.length === maxLines) {
+    let last = lines[maxLines - 1];
+    if (last.length > maxChars - 1) last = last.slice(0, maxChars - 1).trimEnd();
+    lines[maxLines - 1] = last + "…";
+  }
+  return lines;
+}
+
+// prefer ending on a full sentence over an arbitrary word/char cutoff
+function firstSentences(text, minChars) {
+  const parts = (text || "").match(/[^.!?]+[.!?]+/g) || [text || ""];
+  let out = "";
+  for (const p of parts) {
+    out += p;
+    if (out.trim().length >= minChars) break;
+  }
+  return out.trim();
+}
+
+function escXml(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function relativeTime(iso) {
+  const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+  if (days <= 0) return "today";
+  if (days === 1) return "1d ago";
+  if (days < 30) return `${days}d ago`;
+  return `${Math.floor(days / 30)}mo ago`;
+}
+
+async function fetchRepo(username, repo) {
+  const res = await fetch(`https://api.github.com/repos/${username}/${repo}`, {
+    headers: { "User-Agent": "profile-svg-refresh", Accept: "application/vnd.github+json" },
+  });
+  if (!res.ok) {
+    console.warn(`[skip] repo ${repo}: ${res.status}`);
+    return null;
+  }
+  return res.json();
+}
+
+async function fetchTopLanguages(username, repo, limit = 3) {
+  const res = await fetch(`https://api.github.com/repos/${username}/${repo}/languages`, {
+    headers: { "User-Agent": "profile-svg-refresh", Accept: "application/vnd.github+json" },
+  });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return Object.entries(data)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, limit)
+    .map(([name]) => name);
+}
+
+async function buildHighlightedProjects(username, spec) {
+  const raw = await Promise.all(spec.map((s) => fetchRepo(username, s.repo)));
+  if (raw.some((d) => !d)) return null;
+  const langLists = await Promise.all(spec.map((s) => fetchTopLanguages(username, s.repo)));
+
+  const projects = raw.map((d, i) => ({
+    name: spec[i].display,
+    desc: spec[i].desc || d.description || "",
+    curated: Boolean(spec[i].desc),
+    languages: langLists[i].length ? langLists[i] : [d.language || "—"],
+    stars: d.stargazers_count,
+    updated: relativeTime(d.pushed_at),
+  }));
+  const [hero, ...side] = projects;
+
+  // hero and the side column now split the width evenly, and the side
+  // column's two cards are the same width as the hero card - no more
+  // "hero is a different shape than the others" mismatch
+  const GAP = 20;
+  const HERO_W = (960 - GAP) / 2, HERO_H = 340, PAD = 24;
+  const heroLines = wrapText(hero.desc, 45, 8);
+  const heroDescBlockH = (heroLines.length - 1) * 24;
+  // center within the band actually free for the description - between the
+  // title and the meta line - not the full card height, so a short
+  // description doesn't drift toward the card's geometric middle and leave
+  // lopsided gaps above/below
+  const heroContentTop = PAD + 30 + 24;
+  const heroContentBottom = HERO_H - PAD - 4 - 24;
+  const heroDescStartY = (heroContentTop + heroContentBottom) / 2 - heroDescBlockH / 2;
+  const heroDescSvg = heroLines
+    .map((l, i) => `<text x="${PAD}" y="${(heroDescStartY + i * 24).toFixed(1)}" style="font-size:16px;fill:#c9d1d9">${escXml(l)}</text>`)
+    .join("\n");
+  const heroMeta = `${hero.languages.join(" · ")}${hero.stars ? ` · ★ ${hero.stars}` : ""} · updated ${hero.updated}`;
+
+  // a real radial-gradient glow (fades smoothly to transparent) instead of a
+  // flat translucent circle - the earlier version had a visible hard edge,
+  // which is what read as "bad". Centered inside the card so the fade
+  // completes before it reaches any edge, rather than getting clipped.
+  const heroSvg = `<defs>
+  <clipPath id="heroClip"><rect width="${HERO_W}" height="${HERO_H}" rx="16"/></clipPath>
+  <radialGradient id="heroGlow" cx="50%" cy="50%" r="50%">
+    <stop offset="0%" stop-color="#4f8cff" stop-opacity="0.22"/>
+    <stop offset="55%" stop-color="#4f8cff" stop-opacity="0.07"/>
+    <stop offset="100%" stop-color="#4f8cff" stop-opacity="0"/>
+  </radialGradient>
+</defs>
+<rect width="${HERO_W}" height="${HERO_H}" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/><rect width="${HERO_W}" height="${HERO_H}" rx="16" fill="url(#cardSheen)"/>
+<g clip-path="url(#heroClip)"><circle cx="${HERO_W - 60}" cy="70" r="210" fill="url(#heroGlow)"/></g>
+<text x="${PAD}" y="${PAD + 30}" style="font-size:32px;font-weight:800;letter-spacing:-0.01em;fill:#4f8cff">${escXml(hero.name)}</text>
+${heroDescSvg}
+<text x="${PAD}" y="${HERO_H - PAD - 4}" style="font-size:12px;fill:#4f8cff;font-weight:700">${escXml(heroMeta)}</text>`;
+
+  const SIDE_W = HERO_W, SIDE_H = (HERO_H - GAP) / 2, SIDE_PAD = 20;
+  const sideSvg = side
+    .map((p, i) => {
+      // curated descriptions are already hand-fit to the card; only repos
+      // without one fall back to sentence-extraction off the live API text
+      const summary = p.curated ? p.desc : firstSentences(p.desc, 150);
+      const lines = wrapText(summary, 63, 4);
+      const descBlockH = (lines.length - 1) * 17;
+      const descStartY = SIDE_H / 2 + 8 - descBlockH / 2;
+      const linesSvg = lines
+        .map((l, j) => `<text x="${SIDE_PAD}" y="${(descStartY + j * 17).toFixed(1)}" style="font-size:11.5px;fill:#c9d1d9">${escXml(l)}</text>`)
+        .join("\n");
+      const y = i * (SIDE_H + GAP);
+      const meta = `${p.languages.join(" · ")}${p.stars ? ` · ★ ${p.stars}` : ""}`;
+      return `<g transform="translate(0, ${y})">
+  <rect width="${SIDE_W}" height="${SIDE_H}" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/><rect width="${SIDE_W}" height="${SIDE_H}" rx="16" fill="url(#cardSheen)"/>
+  <text x="${SIDE_PAD}" y="${SIDE_PAD + 12}" style="font-size:19px;font-weight:700;fill:#4f8cff">${escXml(p.name)}</text>
+  ${linesSvg}
+  <text x="${SIDE_PAD}" y="${SIDE_H - SIDE_PAD + 2}" style="font-size:10.5px;fill:#4f8cff;font-weight:700">${escXml(meta)}</text>
+</g>`;
+    })
+    .join("\n");
+
+  return `${heroSvg}\n<g transform="translate(${HERO_W + GAP}, 0)">\n${sideSvg}\n</g>`;
+}
+
+// shared by GH-ACTIVITY and the monthly stat - one fetch of GitHub's own
+// public contribution calendar, parsed into a chronological {date,count}[]
+let contributionSeriesCache = null;
+async function fetchContributionSeries(username) {
+  if (contributionSeriesCache) return contributionSeriesCache;
+  const res = await fetch(`https://github.com/users/${username}/contributions`, {
+    headers: { "User-Agent": "profile-svg-refresh" },
+  });
+  if (!res.ok) {
+    console.warn(`[skip] contribution calendar: ${res.status}`);
+    return null;
+  }
+  const html = await res.text();
+
+  const dayIds = [...html.matchAll(/data-date="(\d{4}-\d{2}-\d{2})"[^>]*id="(contribution-day-component-\d+-\d+)"/g)];
+  const tooltips = new Map();
+  for (const m of html.matchAll(/for="(contribution-day-component-\d+-\d+)"[^>]*>([^<]*)<\/tool-tip>/g)) {
+    tooltips.set(m[1], m[2].trim());
+  }
+  if (dayIds.length === 0) {
+    console.warn("[skip] contribution calendar: no cells found");
+    return null;
+  }
+
+  const series = dayIds
+    .map(([, date, id]) => {
+      const text = tooltips.get(id) || "";
+      const m = text.match(/^(\d+|No) contributions?/);
+      const count = !m ? 0 : m[1] === "No" ? 0 : Number(m[1]);
+      return { date, count };
+    })
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  contributionSeriesCache = series;
+  return series;
+}
+
+// GH-ACTIVITY isn't a third-party card - it's built from GitHub's own public
+// contribution calendar so it can be plotted as a cumulative running total
+// (always trending up, "stock chart" shaped) instead of noisy daily counts,
+// while still being 100% real data, refreshed on every run.
+async function buildActivityChart(username, width, height, days = 90) {
+  const full = await fetchContributionSeries(username);
+  if (!full) return null;
+  const series = full.slice(-days);
+
+  let sum = 0;
+  const cumulative = series.map((d) => (sum += d.count));
+  const max = Math.max(1, ...cumulative);
+  const n = cumulative.length;
+
+  const padTop = 10;
+  const padBottom = 4;
+  const plotH = height - padTop - padBottom;
+  const points = cumulative.map((v, i) => {
+    const x = (i / (n - 1)) * width;
+    const y = padTop + plotH - (v / max) * plotH;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  const last = points[points.length - 1].split(",").map(Number);
+
+  return `<svg x="0" y="0" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+  <defs>
+    <linearGradient id="activityFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4f8cff" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#4f8cff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <polygon points="${points.join(" ")} ${width},${height} 0,${height}" fill="url(#activityFill)"/>
+  <polyline points="${points.join(" ")}" fill="none" stroke="#4f8cff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="${last[0]}" cy="${last[1]}" r="4" fill="#4f8cff"/>
+  <circle cx="${last[0]}" cy="${last[1]}" r="8" fill="#4f8cff" opacity="0.25"/>
+</svg>`;
+}
+
+// month-to-date contributions, and that month's share of the trailing-year
+// total - both computed fresh from the live calendar on every run
+async function buildMonthlyStat(username) {
+  const series = await fetchContributionSeries(username);
+  if (!series || series.length === 0) return null;
+
+  const today = series[series.length - 1].date;
+  const thisPrefix = today.slice(0, 7);
+  const thisMonthSum = series.filter((d) => d.date.startsWith(thisPrefix)).reduce((a, b) => a + b.count, 0);
+  const total = series.reduce((a, b) => a + b.count, 0);
+
+  const pct = total === 0 ? 0 : Math.round((thisMonthSum / total) * 1000) / 10;
+  const monthName = new Date(`${today}T00:00:00Z`).toLocaleString("en-US", { month: "short", timeZone: "UTC" });
+  return { count: thisMonthSum, pct, monthName };
+}
+
+async function fetchFirstOk(urls) {
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { headers: { "User-Agent": "profile-svg-refresh" } });
+      if (!res.ok) {
+        console.warn(`[skip] ${res.status} ${url}`);
+        continue;
+      }
+      const text = await res.text();
+      if (!text.includes("<svg")) {
+        console.warn(`[skip] non-svg response from ${url}`);
+        continue;
+      }
+      return text;
+    } catch (err) {
+      console.warn(`[skip] ${url} -> ${err.message}`);
+    }
+  }
+  return null;
+}
+
+function scopeSvg(svgText, prefix) {
+  const rootMatch = svgText.match(/<svg\b[^>]*>/i);
+  if (!rootMatch) throw new Error("no <svg> root found");
+  const rootTag = rootMatch[0];
+  const viewBoxMatch = rootTag.match(/viewBox=["']([^"']+)["']/i);
+  const widthMatch = rootTag.match(/\bwidth=["']([\d.]+)/i);
+  const heightMatch = rootTag.match(/\bheight=["']([\d.]+)/i);
+  const viewBox = viewBoxMatch ? viewBoxMatch[1] : `0 0 ${widthMatch?.[1] ?? 0} ${heightMatch?.[1] ?? 0}`;
+  const width = widthMatch ? Number(widthMatch[1]) : Number(viewBox.split(/\s+/)[2]);
+  const height = heightMatch ? Number(heightMatch[1]) : Number(viewBox.split(/\s+/)[3]);
+
+  let inner = svgText.slice(rootMatch.index + rootTag.length, svgText.lastIndexOf("</svg>"));
+
+  // strip stray non-<text> text nodes some card generators leave behind (e.g. literal "undefined")
+  inner = inner.replace(/>\s*undefined\s*</g, "><");
+
+  const ids = new Set();
+  for (const m of inner.matchAll(/\bid=["']([\w-]+)["']/g)) ids.add(m[1]);
+
+  const keyframes = new Set();
+  for (const m of inner.matchAll(/@keyframes\s+([\w-]+)/g)) keyframes.add(m[1]);
+
+  const renameTokens = new Set([...ids, ...keyframes]);
+  for (const token of renameTokens) {
+    const re = new RegExp(`\\b${token.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}\\b`, "g");
+    inner = inner.replace(re, `${prefix}_${token}`);
+  }
+
+  const styleMatch = inner.match(/<style>([\s\S]*?)<\/style>/);
+  if (styleMatch) {
+    const classNames = new Set();
+    for (const m of styleMatch[1].matchAll(/\.([a-zA-Z_][\w-]*)/g)) classNames.add(m[1]);
+
+    let styleBlock = styleMatch[1];
+    for (const cls of classNames) {
+      const re = new RegExp(`\\.${cls}\\b`, "g");
+      styleBlock = styleBlock.replace(re, `.${prefix}_${cls}`);
+    }
+    inner = inner.replace(styleMatch[1], styleBlock);
+
+    inner = inner.replace(/class=(["'])([^"']*)\1/g, (full, quote, classList) => {
+      const rewritten = classList
+        .split(/\s+/)
+        .filter(Boolean)
+        .map((c) => (classNames.has(c) ? `${prefix}_${c}` : c))
+        .join(" ");
+      return `class=${quote}${rewritten}${quote}`;
+    });
+  }
+
+  return { width, height, viewBox, inner };
+}
+
+function wrapCard(card, scoped) {
+  const width = card.displayWidth ?? scoped.width;
+  const height = card.displayHeight ?? scoped.height;
+  return `<svg x="${card.x}" y="${card.y}" width="${width}" height="${height}" viewBox="${scoped.viewBox}">${scoped.inner}</svg>`;
+}
+
+async function main() {
+  let svg = await readFile(SVG_PATH, "utf8");
+  let changed = false;
+
+  for (const card of CARDS) {
+    const beginTag = `<!-- ${card.marker}:BEGIN -->`;
+    const endTag = `<!-- ${card.marker}:END -->`;
+    const beginIdx = svg.indexOf(beginTag);
+    const endIdx = svg.indexOf(endTag);
+    if (beginIdx === -1 || endIdx === -1) {
+      console.warn(`[skip] markers for ${card.marker} not found in ${SVG_PATH}`);
+      continue;
+    }
+
+    const raw = await fetchFirstOk(card.urls);
+    if (!raw) {
+      console.warn(`[skip] ${card.marker}: all sources failed, keeping existing content`);
+      continue;
+    }
+
+    const scoped = scopeSvg(raw, card.prefix);
+    const replacement = `${beginTag}\n${wrapCard(card, scoped)}\n${endTag}`;
+    svg = svg.slice(0, beginIdx) + replacement + svg.slice(endIdx + endTag.length);
+    changed = true;
+    console.log(`[ok] ${card.marker} refreshed (${scoped.width}x${scoped.height})`);
+  }
+
+  {
+    const beginTag = `<!-- GH-ACTIVITY:BEGIN -->`;
+    const endTag = `<!-- GH-ACTIVITY:END -->`;
+    const beginIdx = svg.indexOf(beginTag);
+    const endIdx = svg.indexOf(endTag);
+    if (beginIdx === -1 || endIdx === -1) {
+      console.warn("[skip] markers for GH-ACTIVITY not found in " + SVG_PATH);
+    } else {
+      const chart = await buildActivityChart(USERNAME, 560, 202);
+      if (!chart) {
+        console.warn("[skip] GH-ACTIVITY: build failed, keeping existing content");
+      } else {
+        const replacement = `${beginTag}\n${chart}\n${endTag}`;
+        svg = svg.slice(0, beginIdx) + replacement + svg.slice(endIdx + endTag.length);
+        changed = true;
+        console.log("[ok] GH-ACTIVITY refreshed (cumulative, real data)");
+      }
+    }
+  }
+
+  {
+    const beginTag = `<!-- GH-MONTHSTAT:BEGIN -->`;
+    const endTag = `<!-- GH-MONTHSTAT:END -->`;
+    const beginIdx = svg.indexOf(beginTag);
+    const endIdx = svg.indexOf(endTag);
+    if (beginIdx === -1 || endIdx === -1) {
+      console.warn("[skip] markers for GH-MONTHSTAT not found in " + SVG_PATH);
+    } else {
+      const stat = await buildMonthlyStat(USERNAME);
+      if (!stat) {
+        console.warn("[skip] GH-MONTHSTAT: build failed, keeping existing content");
+      } else {
+        const replacement = `${beginTag}
+<text x="0" y="0" text-anchor="end" style="font-size:10px;fill:#6c7689;letter-spacing:.05em">${stat.monthName.toUpperCase()}</text>
+<text x="0" y="26" text-anchor="end" style="font-size:26px;font-weight:800;fill:#e7ebf3">${stat.count}</text>
+<text x="0" y="44" text-anchor="end" style="font-size:11px;font-weight:700;fill:#4f8cff">${stat.pct}% of total ▲</text>
+${endTag}`;
+        svg = svg.slice(0, beginIdx) + replacement + svg.slice(endIdx + endTag.length);
+        changed = true;
+        console.log(`[ok] GH-MONTHSTAT refreshed (${stat.count}, ${stat.pct}% of total)`);
+      }
+    }
+  }
+
+  {
+    const beginTag = `<!-- GH-STATS:BEGIN -->`;
+    const endTag = `<!-- GH-STATS:END -->`;
+    const beginIdx = svg.indexOf(beginTag);
+    const endIdx = svg.indexOf(endTag);
+    if (beginIdx === -1 || endIdx === -1) {
+      console.warn("[skip] markers for GH-STATS not found in " + SVG_PATH);
+    } else {
+      const ledger = await buildStatsLedger(USERNAME, 430);
+      if (!ledger) {
+        console.warn("[skip] GH-STATS: build failed, keeping existing content");
+      } else {
+        const replacement = `${beginTag}\n${ledger}\n${endTag}`;
+        svg = svg.slice(0, beginIdx) + replacement + svg.slice(endIdx + endTag.length);
+        changed = true;
+        console.log("[ok] GH-STATS refreshed (ledger, real data)");
+      }
+    }
+  }
+
+  {
+    const beginTag = `<!-- GH-STREAK:BEGIN -->`;
+    const endTag = `<!-- GH-STREAK:END -->`;
+    const beginIdx = svg.indexOf(beginTag);
+    const endIdx = svg.indexOf(endTag);
+    if (beginIdx === -1 || endIdx === -1) {
+      console.warn("[skip] markers for GH-STREAK not found in " + SVG_PATH);
+    } else {
+      const quote = await buildContributionsQuote(USERNAME);
+      const candles = await buildCandlestickChart(USERNAME, 560, 139);
+      if (!quote || !candles) {
+        console.warn("[skip] GH-STREAK: build failed, keeping existing content");
+      } else {
+        const replacement = `${beginTag}
+<g transform="translate(580, 28)">
+<text text-anchor="end" y="0" style="font-size:10px;fill:#6c7689;letter-spacing:.05em">ALL-TIME</text>
+<text text-anchor="end" y="26" style="font-size:26px;font-weight:800;fill:#e7ebf3;font-family:ui-monospace,monospace">${quote.total}</text>
+<text text-anchor="end" y="44" style="font-size:11px;font-weight:700;fill:#4f8cff">${quote.longest}d best streak</text>
+</g>
+<g transform="translate(20, 68)">
+${candles}
+</g>
+${endTag}`;
+        svg = svg.slice(0, beginIdx) + replacement + svg.slice(endIdx + endTag.length);
+        changed = true;
+        console.log(`[ok] GH-STREAK refreshed (candlesticks, ${quote.total} total)`);
+      }
+    }
+  }
+
+  {
+    const beginTag = `<!-- GH-PROJECTS:BEGIN -->`;
+    const endTag = `<!-- GH-PROJECTS:END -->`;
+    const beginIdx = svg.indexOf(beginTag);
+    const endIdx = svg.indexOf(endTag);
+    if (beginIdx === -1 || endIdx === -1) {
+      console.warn("[skip] markers for GH-PROJECTS not found in " + SVG_PATH);
+    } else {
+      const spotlight = await buildHighlightedProjects(USERNAME, [
+        {
+          repo: "The_Forge",
+          display: "The Forge",
+          desc: "A gym management web app with three user roles. Members browse and enroll in classes, reserve equipment, and track activity; trainers manage public profiles and schedules; admins oversee users, classes, and equipment.",
+        },
+        {
+          repo: "Bob_The_Destructor",
+          display: "Bob the Destructor",
+          desc: "A 2D mining game inspired by Minecraft and Terraria. You play as Bob, descending through five caves to collect as many ores as possible in the shortest time.",
+        },
+        {
+          repo: "LCode",
+          display: "LCode",
+          desc: "A code editor built for Minix, with an interactive file tree and editor. Grew out of the LCOM labs into a framework for testing hardware drivers (timer, keyboard, mouse, video, serial) at runtime.",
+        },
+      ]);
+      if (!spotlight) {
+        console.warn("[skip] GH-PROJECTS: build failed, keeping existing content");
+      } else {
+        const replacement = `${beginTag}\n${spotlight}\n${endTag}`;
+        svg = svg.slice(0, beginIdx) + replacement + svg.slice(endIdx + endTag.length);
+        changed = true;
+        console.log("[ok] GH-PROJECTS refreshed (real repo data)");
+      }
+    }
+  }
+
+  if (changed) {
+    await writeFile(SVG_PATH, svg, "utf8");
+    console.log(`wrote ${SVG_PATH}`);
+  } else {
+    console.log("no changes");
+  }
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

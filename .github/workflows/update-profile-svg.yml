@@ -1,0 +1,30 @@
+name: Refresh profile.svg stats cards
+
+on:
+  schedule:
+    - cron: "17 3 * * *" # daily, 03:17 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Refresh GH-STATS / GH-LANGS / GH-STREAK / GH-ACTIVITY cards in profile.svg
+        run: node .github/scripts/refresh-stats.mjs
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add profile.svg
+          git diff --cached --quiet || git commit -m "chore: refresh profile.svg stats cards"
+          git push
