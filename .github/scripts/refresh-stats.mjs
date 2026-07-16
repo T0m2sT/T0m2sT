@@ -3,10 +3,6 @@ import { readFile, writeFile } from "node:fs/promises";
 const USERNAME = process.env.GH_STATS_USERNAME || "T0m2sT";
 const SVG_PATH = process.env.PROFILE_SVG_PATH || "profile.svg";
 
-const THEME = "&hide_border=true&bg_color=00000000&title_color=4f8cff&icon_color=4f8cff&text_color=e7ebf3";
-
-const CARDS = [];
-
 // GitHub's API works unauthenticated (60 req/hour), but the per-repo
 // contributor-stats calls used for the lines-of-code widget can burn through
 // that fast on their own - authenticating with the Actions run's own
@@ -145,12 +141,12 @@ async function buildStatsLedger(username, width) {
     ["Lines of code", loc || "—"],
   ];
 
-  const rowH = 24;
+  const rowH = 25;
   const lines = rows
     .map(([k, v], i) => {
       const y = i * rowH;
       const bg = i % 2 === 0 ? `<rect x="-6" y="${y - 4}" width="${width + 12}" height="${rowH}" rx="6" fill="#ffffff08"/>` : "";
-      return `${bg}<text x="0" y="${y + 15}" style="font-size:13px;fill:#8b93a3">${k}</text><text x="${width}" y="${y + 15}" text-anchor="end" style="font-size:13.5px;font-weight:700">${v}</text>`;
+      return `${bg}<text x="0" y="${y + 16}" style="font-size:14.5px;fill:#8b93a3">${k}</text><text x="${width}" y="${y + 16}" text-anchor="end" style="font-size:15px;font-weight:700">${v}</text>`;
     })
     .join("\n");
 
@@ -318,57 +314,57 @@ async function buildHighlightedProjects(username, spec) {
   // "hero is a different shape than the others" mismatch
   const GAP = 20;
   const HERO_W = (960 - GAP) / 2, HERO_H = 340, PAD = 24;
-  const heroLines = wrapText(hero.desc, 45, 8);
-  const heroDescBlockH = (heroLines.length - 1) * 24;
+  const heroLines = wrapText(hero.desc, 40, 8);
+  const heroDescBlockH = (heroLines.length - 1) * 27;
   // center within the band actually free for the description - between the
   // title and the meta line - not the full card height, so a short
   // description doesn't drift toward the card's geometric middle and leave
   // lopsided gaps above/below
-  const heroContentTop = PAD + 30 + 24;
-  const heroContentBottom = HERO_H - PAD - 4 - 24;
+  const heroContentTop = PAD + 35 + 27;
+  const heroContentBottom = HERO_H - PAD - 4 - 28;
   const heroDescStartY = (heroContentTop + heroContentBottom) / 2 - heroDescBlockH / 2;
   const heroDescSvg = heroLines
-    .map((l, i) => `<text x="${PAD}" y="${(heroDescStartY + i * 24).toFixed(1)}" style="font-size:16px;fill:#c9d1d9">${escXml(l)}</text>`)
+    .map((l, i) => `<text x="${PAD}" y="${(heroDescStartY + i * 27).toFixed(1)}" style="font-size:18px;fill:#c9d1d9">${escXml(l)}</text>`)
     .join("\n");
   const heroMeta = `${hero.languages.join(" · ")}${hero.stars ? ` · ★ ${hero.stars}` : ""} · updated ${hero.updated}`;
 
-  // a real radial-gradient glow (fades smoothly to transparent) instead of a
-  // flat translucent circle - the earlier version had a visible hard edge,
-  // which is what read as "bad". Centered inside the card so the fade
-  // completes before it reaches any edge, rather than getting clipped.
-  const heroSvg = `<defs>
-  <clipPath id="heroClip"><rect width="${HERO_W}" height="${HERO_H}" rx="16"/></clipPath>
-  <radialGradient id="heroGlow" cx="50%" cy="50%" r="50%">
-    <stop offset="0%" stop-color="#4f8cff" stop-opacity="0.22"/>
-    <stop offset="55%" stop-color="#4f8cff" stop-opacity="0.07"/>
-    <stop offset="100%" stop-color="#4f8cff" stop-opacity="0"/>
-  </radialGradient>
-</defs>
-<rect width="${HERO_W}" height="${HERO_H}" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/><rect width="${HERO_W}" height="${HERO_H}" rx="16" fill="url(#cardSheen)"/>
-<g clip-path="url(#heroClip)"><circle cx="${HERO_W - 60}" cy="70" r="210" fill="url(#heroGlow)"/></g>
-<text x="${PAD}" y="${PAD + 30}" style="font-size:32px;font-weight:800;letter-spacing:-0.01em;fill:#4f8cff">${escXml(hero.name)}</text>
+  // underline accent beneath each project title (hero + both side cards) is
+  // the shared "highlighted" mark - forced to the title's exact text width
+  // via textLength/lengthAdjust (same trick generate-portrait.mjs uses for
+  // its glyph rows) instead of estimating pixel width from a char-count *
+  // ratio guess, which drifted long or short depending on which fallback
+  // monospace font the viewer's browser actually picked. Painted before the
+  // title text (not after) so the text sits on top of the line, not the
+  // other way around, wherever a descender dips into it.
+  const HERO_TITLE_SIZE = 37;
+  const heroTitleW = Math.round(hero.name.length * HERO_TITLE_SIZE * 0.6);
+  const heroSvg = `<rect width="${HERO_W}" height="${HERO_H}" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/><rect width="${HERO_W}" height="${HERO_H}" rx="16" fill="url(#cardSheen)"/>
+<rect x="${PAD}" y="${PAD + 39}" width="${heroTitleW}" height="3" rx="1.5" fill="#4f8cff"/>
+<text x="${PAD}" y="${PAD + 35}" textLength="${heroTitleW}" lengthAdjust="spacingAndGlyphs" style="font-size:${HERO_TITLE_SIZE}px;font-weight:800;letter-spacing:-0.01em;fill:#e7ebf3">${escXml(hero.name)}</text>
 ${heroDescSvg}
-<text x="${PAD}" y="${HERO_H - PAD - 4}" style="font-size:12px;fill:#4f8cff;font-weight:700">${escXml(heroMeta)}</text>`;
+<text x="${PAD}" y="${HERO_H - PAD - 4}" style="font-size:14px;fill:#4f8cff;font-weight:700">${escXml(heroMeta)}</text>`;
 
-  const SIDE_W = HERO_W, SIDE_H = (HERO_H - GAP) / 2, SIDE_PAD = 20;
+  const SIDE_W = HERO_W, SIDE_H = (HERO_H - GAP) / 2, SIDE_PAD = 20, SIDE_TITLE_SIZE = 22;
   const sideSvg = side
     .map((p, i) => {
       // curated descriptions are already hand-fit to the card; only repos
       // without one fall back to sentence-extraction off the live API text
       const summary = p.curated ? p.desc : firstSentences(p.desc, 150);
-      const lines = wrapText(summary, 63, 4);
-      const descBlockH = (lines.length - 1) * 17;
-      const descStartY = SIDE_H / 2 + 8 - descBlockH / 2;
+      const lines = wrapText(summary, 50, 4);
+      const descBlockH = (lines.length - 1) * 21;
+      const descStartY = SIDE_H / 2 + 10 - descBlockH / 2;
       const linesSvg = lines
-        .map((l, j) => `<text x="${SIDE_PAD}" y="${(descStartY + j * 17).toFixed(1)}" style="font-size:11.5px;fill:#c9d1d9">${escXml(l)}</text>`)
+        .map((l, j) => `<text x="${SIDE_PAD}" y="${(descStartY + j * 21).toFixed(1)}" style="font-size:14.5px;fill:#c9d1d9">${escXml(l)}</text>`)
         .join("\n");
       const y = i * (SIDE_H + GAP);
       const meta = `${p.languages.join(" · ")}${p.stars ? ` · ★ ${p.stars}` : ""}`;
+      const titleW = Math.round(p.name.length * SIDE_TITLE_SIZE * 0.6);
       return `<g transform="translate(0, ${y})">
   <rect width="${SIDE_W}" height="${SIDE_H}" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/><rect width="${SIDE_W}" height="${SIDE_H}" rx="16" fill="url(#cardSheen)"/>
-  <text x="${SIDE_PAD}" y="${SIDE_PAD + 12}" style="font-size:19px;font-weight:700;fill:#4f8cff">${escXml(p.name)}</text>
+  <rect x="${SIDE_PAD}" y="${SIDE_PAD + 17}" width="${titleW}" height="3" rx="1.5" fill="#4f8cff"/>
+  <text x="${SIDE_PAD}" y="${SIDE_PAD + 14}" textLength="${titleW}" lengthAdjust="spacingAndGlyphs" style="font-size:${SIDE_TITLE_SIZE}px;font-weight:700;fill:#e7ebf3">${escXml(p.name)}</text>
   ${linesSvg}
-  <text x="${SIDE_PAD}" y="${SIDE_H - SIDE_PAD + 2}" style="font-size:10.5px;fill:#4f8cff;font-weight:700">${escXml(meta)}</text>
+  <text x="${SIDE_PAD}" y="${SIDE_H - SIDE_PAD + 2}" style="font-size:12px;fill:#4f8cff;font-weight:700">${escXml(meta)}</text>
 </g>`;
     })
     .join("\n");
@@ -488,91 +484,9 @@ async function fetchFirstOk(urls) {
   return null;
 }
 
-function scopeSvg(svgText, prefix) {
-  const rootMatch = svgText.match(/<svg\b[^>]*>/i);
-  if (!rootMatch) throw new Error("no <svg> root found");
-  const rootTag = rootMatch[0];
-  const viewBoxMatch = rootTag.match(/viewBox=["']([^"']+)["']/i);
-  const widthMatch = rootTag.match(/\bwidth=["']([\d.]+)/i);
-  const heightMatch = rootTag.match(/\bheight=["']([\d.]+)/i);
-  const viewBox = viewBoxMatch ? viewBoxMatch[1] : `0 0 ${widthMatch?.[1] ?? 0} ${heightMatch?.[1] ?? 0}`;
-  const width = widthMatch ? Number(widthMatch[1]) : Number(viewBox.split(/\s+/)[2]);
-  const height = heightMatch ? Number(heightMatch[1]) : Number(viewBox.split(/\s+/)[3]);
-
-  let inner = svgText.slice(rootMatch.index + rootTag.length, svgText.lastIndexOf("</svg>"));
-
-  // strip stray non-<text> text nodes some card generators leave behind (e.g. literal "undefined")
-  inner = inner.replace(/>\s*undefined\s*</g, "><");
-
-  const ids = new Set();
-  for (const m of inner.matchAll(/\bid=["']([\w-]+)["']/g)) ids.add(m[1]);
-
-  const keyframes = new Set();
-  for (const m of inner.matchAll(/@keyframes\s+([\w-]+)/g)) keyframes.add(m[1]);
-
-  const renameTokens = new Set([...ids, ...keyframes]);
-  for (const token of renameTokens) {
-    const re = new RegExp(`\\b${token.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")}\\b`, "g");
-    inner = inner.replace(re, `${prefix}_${token}`);
-  }
-
-  const styleMatch = inner.match(/<style>([\s\S]*?)<\/style>/);
-  if (styleMatch) {
-    const classNames = new Set();
-    for (const m of styleMatch[1].matchAll(/\.([a-zA-Z_][\w-]*)/g)) classNames.add(m[1]);
-
-    let styleBlock = styleMatch[1];
-    for (const cls of classNames) {
-      const re = new RegExp(`\\.${cls}\\b`, "g");
-      styleBlock = styleBlock.replace(re, `.${prefix}_${cls}`);
-    }
-    inner = inner.replace(styleMatch[1], styleBlock);
-
-    inner = inner.replace(/class=(["'])([^"']*)\1/g, (full, quote, classList) => {
-      const rewritten = classList
-        .split(/\s+/)
-        .filter(Boolean)
-        .map((c) => (classNames.has(c) ? `${prefix}_${c}` : c))
-        .join(" ");
-      return `class=${quote}${rewritten}${quote}`;
-    });
-  }
-
-  return { width, height, viewBox, inner };
-}
-
-function wrapCard(card, scoped) {
-  const width = card.displayWidth ?? scoped.width;
-  const height = card.displayHeight ?? scoped.height;
-  return `<svg x="${card.x}" y="${card.y}" width="${width}" height="${height}" viewBox="${scoped.viewBox}">${scoped.inner}</svg>`;
-}
-
 async function main() {
   let svg = await readFile(SVG_PATH, "utf8");
   let changed = false;
-
-  for (const card of CARDS) {
-    const beginTag = `<!-- ${card.marker}:BEGIN -->`;
-    const endTag = `<!-- ${card.marker}:END -->`;
-    const beginIdx = svg.indexOf(beginTag);
-    const endIdx = svg.indexOf(endTag);
-    if (beginIdx === -1 || endIdx === -1) {
-      console.warn(`[skip] markers for ${card.marker} not found in ${SVG_PATH}`);
-      continue;
-    }
-
-    const raw = await fetchFirstOk(card.urls);
-    if (!raw) {
-      console.warn(`[skip] ${card.marker}: all sources failed, keeping existing content`);
-      continue;
-    }
-
-    const scoped = scopeSvg(raw, card.prefix);
-    const replacement = `${beginTag}\n${wrapCard(card, scoped)}\n${endTag}`;
-    svg = svg.slice(0, beginIdx) + replacement + svg.slice(endIdx + endTag.length);
-    changed = true;
-    console.log(`[ok] ${card.marker} refreshed (${scoped.width}x${scoped.height})`);
-  }
 
   {
     const beginTag = `<!-- GH-TABS:BEGIN -->`;
@@ -623,9 +537,9 @@ async function main() {
         console.warn("[skip] GH-MONTHSTAT: build failed, keeping existing content");
       } else {
         const replacement = `${beginTag}
-<text x="0" y="0" text-anchor="end" style="font-size:10px;fill:#6c7689;letter-spacing:.05em">${stat.monthName.toUpperCase()}</text>
-<text x="0" y="26" text-anchor="end" style="font-size:26px;font-weight:800;fill:#e7ebf3">${stat.count}</text>
-<text x="0" y="44" text-anchor="end" style="font-size:11px;font-weight:700;fill:#4f8cff">${stat.pct}% of total ▲</text>
+<text x="0" y="0" text-anchor="end" style="font-size:11.5px;fill:#6c7689;letter-spacing:.05em">${stat.monthName.toUpperCase()}</text>
+<text x="0" y="30" text-anchor="end" style="font-size:30px;font-weight:800;fill:#e7ebf3">${stat.count}</text>
+<text x="0" y="51" text-anchor="end" style="font-size:12.5px;font-weight:700;fill:#4f8cff">${stat.pct}% of total ▲</text>
 ${endTag}`;
         svg = svg.slice(0, beginIdx) + replacement + svg.slice(endIdx + endTag.length);
         changed = true;
@@ -669,11 +583,11 @@ ${endTag}`;
       } else {
         const replacement = `${beginTag}
 <g transform="translate(580, 28)">
-<text text-anchor="end" y="0" style="font-size:10px;fill:#6c7689;letter-spacing:.05em">ALL-TIME</text>
-<text text-anchor="end" y="26" style="font-size:26px;font-weight:800;fill:#e7ebf3;font-family:ui-monospace,monospace">${quote.total}</text>
-<text text-anchor="end" y="44" style="font-size:11px;font-weight:700;fill:#4f8cff">${quote.longest}d best streak</text>
+<text text-anchor="end" y="0" style="font-size:11.5px;fill:#6c7689;letter-spacing:.05em">ALL-TIME</text>
+<text text-anchor="end" y="30" style="font-size:30px;font-weight:800;fill:#e7ebf3;font-family:ui-monospace,monospace">${quote.total}</text>
+<text text-anchor="end" y="51" style="font-size:12.5px;font-weight:700;fill:#4f8cff">${quote.longest}d best streak</text>
 </g>
-<g transform="translate(20, 68)">
+<g transform="translate(20, 80)">
 ${candles}
 </g>
 ${endTag}`;
@@ -696,17 +610,17 @@ ${endTag}`;
         {
           repo: "The_Forge",
           display: "The Forge",
-          desc: "A gym management web app with three user roles. Members browse and enroll in classes, reserve equipment, and track activity; trainers manage public profiles and schedules; admins oversee users, classes, and equipment.",
+          desc: "A gym management website built around three roles - members book classes, trainers manage schedules, admins run the show.",
         },
         {
           repo: "Bob_The_Destructor",
           display: "Bob the Destructor",
-          desc: "A 2D mining game inspired by Minecraft and Terraria. You play as Bob, descending through five caves to collect as many ores as possible in the shortest time.",
+          desc: "Five caves, one miner, endless ore - how deep can you dig?",
         },
         {
           repo: "LCode",
           display: "LCode",
-          desc: "A code editor built for Minix, with an interactive file tree and editor. Grew out of the LCOM labs into a framework for testing hardware drivers (timer, keyboard, mouse, video, serial) at runtime.",
+          desc: "Minix had no code editor, so we built one - and used it to test real hardware drivers.",
         },
       ]);
       if (!spotlight) {
