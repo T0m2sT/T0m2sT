@@ -79,29 +79,60 @@ async function fetchContributorStats(username, repo) {
 
 // real "lines of code" - additions/deletions summed from GitHub's own
 // per-repo contributor stats (not a clone + git log, so it works without a
-// token and stays cheap enough to run daily), across every owned, non-fork
-// repo, filtered down to commits actually authored by this user.
+// token and stays cheap enough to run daily), across every owned repo -
+// forks included, since a fork with real commits from this user (not just
+// a click-to-fork-and-never-touch) is still this user's own work - filtered
+// down to commits actually authored by this user.
+// also reports ownRepos - how many of the user's own repos they have commits
+// in - since that's a free byproduct of the same per-repo contributor-stats
+// fetch, and github-readme-stats' "contribs" figure (used for the
+// "Contributed to" row) only counts repos the user does NOT own, same as
+// GitHub's own profile page. Adding ownRepos to it is what makes that row
+// count every repo, not just external ones.
 async function buildLinesOfCode(username) {
   const reposRes = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&type=owner`, {
     headers: ghHeaders(),
   });
-  if (!reposRes.ok) return null;
-  const repos = (await reposRes.json()).filter((r) => !r.fork);
+  if (!reposRes.ok) return { loc: null, ownRepos: 0 };
+  const repos = await reposRes.json();
 
-  const results = await Promise.all(repos.map((r) => fetchContributorStats(username, r.name)));
+  const perRepo = await Promise.all(
+    repos.map(async (r) => {
+      const stats = await fetchContributorStats(username, r.name);
+      if (Array.isArray(stats)) {
+        const mine = stats.find((c) => c.author && c.author.login?.toLowerCase() === username.toLowerCase());
+        if (!mine) return null;
+        let additions = 0, deletions = 0;
+        for (const w of mine.weeks) {
+          additions += w.a;
+          deletions += w.d;
+        }
+        return { additions, deletions };
+      }
+      // stats/contributors never generated a cache for this repo (some
+      // low-activity repos just sit at 204 forever, no amount of retrying
+      // fixes it) - fall back to the plain commits list, which works even
+      // when the stats cache doesn't, so a real contribution isn't silently
+      // dropped just because GitHub never computed the aggregate. Additions
+      // and deletions are unknown in this case, so this repo counts toward
+      // ownRepos but contributes 0 to the lines-of-code tally.
+      const commitsRes = await fetch(`https://api.github.com/repos/${username}/${r.name}/commits?author=${username}&per_page=1`, {
+        headers: ghHeaders(),
+      });
+      if (!commitsRes.ok) return null;
+      const commits = await commitsRes.json();
+      return Array.isArray(commits) && commits.length > 0 ? { additions: 0, deletions: 0 } : null;
+    })
+  );
 
-  let additions = 0, deletions = 0, any = false;
-  for (const stats of results) {
-    if (!Array.isArray(stats)) continue;
-    const mine = stats.find((c) => c.author && c.author.login?.toLowerCase() === username.toLowerCase());
-    if (!mine) continue;
-    any = true;
-    for (const w of mine.weeks) {
-      additions += w.a;
-      deletions += w.d;
-    }
+  let additions = 0, deletions = 0, ownRepos = 0;
+  for (const r of perRepo) {
+    if (!r) continue;
+    ownRepos++;
+    additions += r.additions;
+    deletions += r.deletions;
   }
-  if (!any) return null;
+  if (ownRepos === 0) return { loc: null, ownRepos: 0 };
 
   const net = additions - deletions;
   // ++ / -- colored like a diff (green additions, red deletions) instead of
@@ -109,7 +140,37 @@ async function buildLinesOfCode(username) {
   const net_ = net.toLocaleString("en-US");
   const add_ = additions.toLocaleString("en-US");
   const del_ = deletions.toLocaleString("en-US");
-  return `${net_} (<tspan fill="#3ddc84">${add_}++</tspan>, <tspan fill="#ff5c5c">${del_}--</tspan>)`;
+  const loc = `${net_} <tspan dx="-3" style="font-size:16px">(<tspan fill="#3ddc84">${add_}++</tspan>, <tspan fill="#ff5c5c">${del_}--</tspan>)</tspan>`;
+  return { loc, ownRepos };
+}
+
+// all-time count of repos NOT owned by this user where they've authored a
+// PR or a commit, via the Search API (no time bound) - unlike GitHub's own
+// "contributed to" stat (and github-readme-stats' "contribs" figure, which
+// is scraped from it), which is scoped to roughly the trailing year and so
+// misses older school/group-project repos.
+async function fetchExternalContribRepos(username) {
+  const repos = new Set();
+  const headers = ghHeaders();
+
+  const prRes = await fetch(`https://api.github.com/search/issues?q=author:${username}+type:pr&per_page=100`, { headers });
+  if (prRes.ok) {
+    const data = await prRes.json();
+    for (const item of data.items || []) {
+      repos.add(item.repository_url.replace("https://api.github.com/repos/", "").toLowerCase());
+    }
+  }
+
+  const commitRes = await fetch(`https://api.github.com/search/commits?q=author:${username}&per_page=100`, { headers });
+  if (commitRes.ok) {
+    const data = await commitRes.json();
+    for (const item of data.items || []) {
+      repos.add(item.repository.full_name.toLowerCase());
+    }
+  }
+
+  const ownPrefix = `${username.toLowerCase()}/`;
+  return [...repos].filter((r) => !r.startsWith(ownPrefix)).length;
 }
 
 // GH-STATS is now a custom "ledger" widget instead of the embedded default
@@ -129,24 +190,30 @@ async function buildStatsLedger(username, width) {
   };
   const rankMatch = raw.match(/class="rank-text">[\s\S]*?<text[^>]*>\s*([^<]+?)\s*<\/text>/);
   const rank = rankMatch ? rankMatch[1].trim() : "—";
-  const loc = await buildLinesOfCode(username);
+  const { loc, ownRepos } = await buildLinesOfCode(username);
+
+  const externalContribs = await fetchExternalContribRepos(username);
+  const contribs = (externalContribs + ownRepos).toLocaleString("en-US");
 
   const rows = [
-    ["Total stars", grab("stars")],
-    ["Commits (2026)", grab("commits")],
-    ["Pull requests", grab("prs")],
+    ["Total Stars", grab("stars")],
+    ["Pull Requests", grab("prs")],
     ["Issues", grab("issues")],
-    ["Contributed to", grab("contribs")],
+    ["Repos Touched", contribs],
+    ["Lines", loc || "—"],
     ["Rank", rank],
-    ["Lines of code", loc || "—"],
   ];
 
-  const rowH = 25;
+  // 6 rows now (was 7 with Commits) - row height recomputed so they still
+  // divide the card's available vertical space evenly instead of leaving a
+  // leftover gap at the bottom where the removed row used to be
+  const rowH = 30;
   const lines = rows
     .map(([k, v], i) => {
       const y = i * rowH;
       const bg = i % 2 === 0 ? `<rect x="-6" y="${y - 4}" width="${width + 12}" height="${rowH}" rx="6" fill="#ffffff08"/>` : "";
-      return `${bg}<text x="0" y="${y + 16}" style="font-size:14.5px;fill:#8b93a3">${k}</text><text x="${width}" y="${y + 16}" text-anchor="end" style="font-size:15px;font-weight:700">${v}</text>`;
+      const valueColor = k === "Rank" ? ";fill:#3ddc84" : "";
+      return `${bg}<text x="0" y="${y + 20}" style="font-size:16px;fill:#8b93a3">${k}</text><text x="${width}" y="${y + 20}" text-anchor="end" style="font-size:18px;font-weight:700${valueColor}">${v}</text>`;
     })
     .join("\n");
 
