@@ -341,7 +341,7 @@
 
   <!-- total contributions -->
   <g transform="translate(380, 380)">
-    <rect x="0" y="0" width="600" height="227" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/><rect x="0" y="0" width="600" height="227" rx="16" fill="url(#cardSheen)"/>
+    <rect x="0" y="0" width="600" height="237" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/><rect x="0" y="0" width="600" height="237" rx="16" fill="url(#cardSheen)"/>
     <text x="20" y="24" class="lbl">Total Contributions</text>
     <!-- GH-STREAK:BEGIN -->
 <g transform="translate(580, 28)">
