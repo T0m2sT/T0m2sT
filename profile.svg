@@ -28,7 +28,7 @@
     <clipPath id="portraitClip"><rect x="0" y="0" width="340" height="597" rx="16"/></clipPath>
   </defs>
 
-  <rect x="0" y="0" width="1020" height="898" fill="#0d1117"/>
+  <rect x="0" y="0" width="1020" height="898" fill="#010409"/>
 
   <!-- portrait -->
   <g transform="translate(30, 30)">
