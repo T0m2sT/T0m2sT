@@ -688,14 +688,14 @@ ${endTag}`;
         repo: "The_Forge",
         display: "The Forge",
         desc: "A gym management website built around three roles - members book classes, trainers manage schedules, admins run the show.",
-        banner: `<image href="data:image/png;base64,${forgeBanner}" x="0" y="0" width="320" height="140" preserveAspectRatio="xMidYMid slice"/>`,
+        banner: `<image href="data:image/png;base64,${forgeBanner}" x="0" y="0" width="340" height="140" preserveAspectRatio="xMidYMid slice"/>`,
         file: "cards/the-forge.svg",
       },
       {
         repo: "Bob_The_Destructor",
         display: "Bob the Destructor",
         desc: "Five caves, one miner, endless ore - how deep can you dig? Mine smarter and outlast every collapse.",
-        banner: `<image href="data:image/png;base64,${bobBanner}" x="0" y="0" width="320" height="140" preserveAspectRatio="xMidYMid slice"/>`,
+        banner: `<image href="data:image/png;base64,${bobBanner}" x="0" y="0" width="340" height="140" preserveAspectRatio="xMidYMid slice"/>`,
         file: "cards/bob-the-destructor.svg",
       },
     ];
