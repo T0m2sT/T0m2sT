@@ -287,21 +287,50 @@ async function buildCandlestickChart(username, chartWidth, chartHeight, weeks = 
   return bars;
 }
 
-// GH-PROJECTS: the "Highlighted projects" spotlight - real repo data (name,
-// description, language, stars, last push) fetched live from the GitHub API,
-// not hand-typed, so it stays accurate as the repos change.
-function wrapText(text, maxChars, maxLines) {
+// helpers shared by the standalone project cards (see cards/*.svg, built by
+// buildProjectCard below) - real repo data (language, commits, last push)
+// fetched live from the GitHub API, not hand-typed, so it stays accurate as
+// the repos change.
+// per-mille advance widths (standard Helvetica AFM metrics) used to wrap
+// description text by actual measured pixel width instead of a rough
+// character count - keeps the right margin as tight as the left one instead
+// of leaving a guessed amount of slack on every line.
+const GLYPH_WIDTH = {
+  " ": 278, "!": 278, '"': 355, "#": 556, $: 556, "%": 889, "&": 667, "'": 191,
+  "(": 333, ")": 333, "*": 389, "+": 584, ",": 278, "-": 333, ".": 278, "/": 278,
+  0: 556, 1: 556, 2: 556, 3: 556, 4: 556, 5: 556, 6: 556, 7: 556, 8: 556, 9: 556,
+  ":": 278, ";": 278, "<": 584, "=": 584, ">": 584, "?": 556, "@": 1015,
+  A: 667, B: 667, C: 722, D: 722, E: 667, F: 611, G: 778, H: 722, I: 278, J: 500,
+  K: 667, L: 556, M: 833, N: 722, O: 778, P: 667, Q: 778, R: 722, S: 667, T: 611,
+  U: 722, V: 667, W: 944, X: 667, Y: 667, Z: 611,
+  a: 556, b: 556, c: 500, d: 556, e: 556, f: 278, g: 556, h: 556, i: 222, j: 222,
+  k: 500, l: 222, m: 833, n: 556, o: 556, p: 556, q: 556, r: 333, s: 500, t: 278,
+  u: 556, v: 500, w: 722, x: 500, y: 500, z: 500,
+};
+
+function textWidthPx(str, fontSize) {
+  let units = 0;
+  for (const ch of str) units += GLYPH_WIDTH[ch] ?? 556;
+  return (units * fontSize) / 1000;
+}
+
+function wrapText(text, maxWidthPx, fontSize, maxLines) {
   const words = (text || "").split(/\s+/).filter(Boolean);
+  const spaceW = textWidthPx(" ", fontSize);
   const lines = [];
   let cur = "";
+  let curW = 0;
   for (const w of words) {
-    const next = cur ? `${cur} ${w}` : w;
-    if (next.length > maxChars) {
+    const wW = textWidthPx(w, fontSize);
+    const nextW = cur ? curW + spaceW + wW : wW;
+    if (nextW > maxWidthPx) {
       if (cur) lines.push(cur);
       cur = w;
+      curW = wW;
       if (lines.length === maxLines) break;
     } else {
-      cur = next;
+      cur = cur ? `${cur} ${w}` : w;
+      curW = nextW;
     }
   }
   const consumedAll = lines.length < maxLines;
@@ -309,21 +338,12 @@ function wrapText(text, maxChars, maxLines) {
   const truncated = !consumedAll;
   if (truncated && lines.length === maxLines) {
     let last = lines[maxLines - 1];
-    if (last.length > maxChars - 1) last = last.slice(0, maxChars - 1).trimEnd();
+    while (last.length > 1 && textWidthPx(last + "…", fontSize) > maxWidthPx) {
+      last = last.slice(0, -1).trimEnd();
+    }
     lines[maxLines - 1] = last + "…";
   }
   return lines;
-}
-
-// prefer ending on a full sentence over an arbitrary word/char cutoff
-function firstSentences(text, minChars) {
-  const parts = (text || "").match(/[^.!?]+[.!?]+/g) || [text || ""];
-  let out = "";
-  for (const p of parts) {
-    out += p;
-    if (out.trim().length >= minChars) break;
-  }
-  return out.trim();
 }
 
 function escXml(s) {
@@ -361,82 +381,76 @@ async function fetchTopLanguages(username, repo, limit = 3) {
     .map(([name]) => name);
 }
 
-async function buildHighlightedProjects(username, spec) {
-  const raw = await Promise.all(spec.map((s) => fetchRepo(username, s.repo)));
-  if (raw.some((d) => !d)) return null;
-  const langLists = await Promise.all(spec.map((s) => fetchTopLanguages(username, s.repo)));
+async function fetchTotalCommits(username, repo) {
+  const res = await fetch(`https://api.github.com/repos/${username}/${repo}/commits?per_page=1`, { headers: ghHeaders() });
+  if (!res.ok) return null;
+  const link = res.headers.get("link");
+  const m = link && link.match(/page=(\d+)>; rel="last"/);
+  if (m) return Number(m[1]);
+  const data = await res.json();
+  return Array.isArray(data) ? data.length : null;
+}
 
-  const projects = raw.map((d, i) => ({
-    name: spec[i].display,
-    desc: spec[i].desc || d.description || "",
-    curated: Boolean(spec[i].desc),
-    languages: langLists[i].length ? langLists[i] : [d.language || "—"],
-    stars: d.stargazers_count,
-    updated: relativeTime(d.pushed_at),
-  }));
-  const [hero, ...side] = projects;
+// Highlighted-project cards are now standalone SVG files (see cards/*.svg),
+// each wrapped in a real <a href> in README.md, instead of one section baked
+// into profile.svg - GitHub strips all interactivity from SVGs loaded via
+// <img>, so a link only works this way: a real HTML <a> around a separate
+// <img>, not an <a> living inside the image itself. The card still carries
+// its own font/filter <defs> since it's no longer sharing profile.svg's.
+async function buildProjectCard(username, spec) {
+  const repoData = await fetchRepo(username, spec.repo);
+  if (!repoData) return null;
 
-  // hero and the side column now split the width evenly, and the side
-  // column's two cards are the same width as the hero card - no more
-  // "hero is a different shape than the others" mismatch
-  const GAP = 20;
-  const HERO_W = (960 - GAP) / 2, HERO_H = 340, PAD = 24;
-  const heroLines = wrapText(hero.desc, 40, 8);
-  const heroDescBlockH = (heroLines.length - 1) * 27;
-  // center within the band actually free for the description - between the
-  // title and the meta line - not the full card height, so a short
-  // description doesn't drift toward the card's geometric middle and leave
-  // lopsided gaps above/below
-  const heroContentTop = PAD + 26 + 27;
-  const heroContentBottom = HERO_H - PAD - 4 - 28;
-  const heroDescStartY = (heroContentTop + heroContentBottom) / 2 - heroDescBlockH / 2;
-  const heroDescSvg = heroLines
-    .map((l, i) => `<text x="${PAD}" y="${(heroDescStartY + i * 27).toFixed(1)}" style="font-size:18px;fill:#c9d1d9">${escXml(l)}</text>`)
-    .join("\n");
-  const heroMeta = `${hero.languages.join(" · ")}${hero.stars ? ` · ★ ${hero.stars}` : ""} · updated ${hero.updated}`;
+  const langs = await fetchTopLanguages(username, spec.repo);
+  const tags = langs.length ? langs : [repoData.language || "—"];
+  const totalCommits = await fetchTotalCommits(username, spec.repo);
 
-  // underline accent beneath each project title (hero + both side cards) is
-  // the shared "highlighted" mark - forced to the title's exact text width
-  // via textLength/lengthAdjust (same trick generate-portrait.mjs uses for
-  // its glyph rows) instead of estimating pixel width from a char-count *
-  // ratio guess, which drifted long or short depending on which fallback
-  // monospace font the viewer's browser actually picked. Painted before the
-  // title text (not after) so the text sits on top of the line, not the
-  // other way around, wherever a descender dips into it.
-  const HERO_TITLE_SIZE = 28;
-  const heroTitleW = Math.round(hero.name.length * HERO_TITLE_SIZE * 0.6);
-  const heroSvg = `<rect width="${HERO_W}" height="${HERO_H}" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/><rect width="${HERO_W}" height="${HERO_H}" rx="16" fill="url(#cardSheen)"/>
-<rect x="${PAD}" y="${PAD + 30}" width="${heroTitleW}" height="3" rx="1.5" fill="#4f8cff"/>
-<text x="${PAD}" y="${PAD + 26}" textLength="${heroTitleW}" lengthAdjust="spacingAndGlyphs" style="font-size:${HERO_TITLE_SIZE}px;font-weight:800;letter-spacing:-0.01em;fill:#e7ebf3">${escXml(hero.name)}</text>
-${heroDescSvg}
-<text x="${PAD}" y="${HERO_H - PAD - 4}" style="font-size:14px;fill:#4f8cff;font-weight:700">${escXml(heroMeta)}</text>`;
+  let additions = 0;
+  const stats = await fetchContributorStats(username, spec.repo);
+  if (Array.isArray(stats)) {
+    const mine = stats.find((c) => c.author && c.author.login?.toLowerCase() === username.toLowerCase());
+    if (mine) for (const w of mine.weeks) additions += w.a;
+  }
 
-  const SIDE_W = HERO_W, SIDE_H = (HERO_H - GAP) / 2, SIDE_PAD = 20, SIDE_TITLE_SIZE = 22;
-  const sideSvg = side
-    .map((p, i) => {
-      // curated descriptions are already hand-fit to the card; only repos
-      // without one fall back to sentence-extraction off the live API text
-      const summary = p.curated ? p.desc : firstSentences(p.desc, 150);
-      const lines = wrapText(summary, 50, 4);
-      const descBlockH = (lines.length - 1) * 21;
-      const descStartY = SIDE_H / 2 + 10 - descBlockH / 2;
-      const linesSvg = lines
-        .map((l, j) => `<text x="${SIDE_PAD}" y="${(descStartY + j * 21).toFixed(1)}" style="font-size:14.5px;fill:#c9d1d9">${escXml(l)}</text>`)
-        .join("\n");
-      const y = i * (SIDE_H + GAP);
-      const meta = `${p.languages.join(" · ")}${p.stars ? ` · ★ ${p.stars}` : ""}`;
-      const titleW = Math.round(p.name.length * SIDE_TITLE_SIZE * 0.6);
-      return `<g transform="translate(0, ${y})">
-  <rect width="${SIDE_W}" height="${SIDE_H}" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/><rect width="${SIDE_W}" height="${SIDE_H}" rx="16" fill="url(#cardSheen)"/>
-  <rect x="${SIDE_PAD}" y="${SIDE_PAD + 17}" width="${titleW}" height="3" rx="1.5" fill="#4f8cff"/>
-  <text x="${SIDE_PAD}" y="${SIDE_PAD + 14}" textLength="${titleW}" lengthAdjust="spacingAndGlyphs" style="font-size:${SIDE_TITLE_SIZE}px;font-weight:700;fill:#e7ebf3">${escXml(p.name)}</text>
-  ${linesSvg}
-  <text x="${SIDE_PAD}" y="${SIDE_H - SIDE_PAD + 2}" style="font-size:12px;fill:#4f8cff;font-weight:700">${escXml(meta)}</text>
-</g>`;
-    })
-    .join("\n");
+  const CW = 340, PAD = 18, IMG_H = 140;
+  const descLines = wrapText(spec.desc, CW - 2 * PAD, 11.5, 3);
+  const descBlockH = 3 * 17; // reserve fixed space for 3 lines regardless of actual wrap
+  let y = IMG_H + 26;
+  let body = `<g clip-path="url(#imgClip)">${spec.banner}</g>`;
+  body += `<text x="${PAD}" y="${y}" style="font-family:ui-sans-serif,-apple-system,'Segoe UI',system-ui,sans-serif;font-size:16px;font-weight:800;fill:#e7ebf3">${escXml(spec.display)}</text>`;
+  y += 24;
+  const descTop = y;
+  for (const l of descLines) {
+    body += `<text x="${PAD}" y="${y}" style="font-family:ui-sans-serif,-apple-system,'Segoe UI',system-ui,sans-serif;font-size:11.5px;fill:#c9d1d9">${escXml(l)}</text>`;
+    y += 17;
+  }
+  y = descTop + descBlockH + 10;
+  let tx = PAD;
+  for (const tag of tags) {
+    const w = tag.length * 7 + 20;
+    body += `<rect x="${tx}" y="${y - 13}" width="${w}" height="22" rx="11" fill="#141a26" stroke="#ffffff14"/><text x="${tx + w / 2}" y="${y + 2}" text-anchor="middle" style="font-size:10px;font-weight:700;fill:#4f8cff">${escXml(tag)}</text>`;
+    tx += w + 7;
+  }
+  y += 30;
+  body += `<line x1="${PAD}" y1="${y}" x2="${CW - PAD}" y2="${y}" stroke="#ffffff14"/>`;
+  y += 24;
+  body += `<text x="${PAD}" y="${y}" style="font-family:ui-sans-serif,-apple-system,'Segoe UI',system-ui,sans-serif;font-size:11.5px;font-weight:700;fill:#4f8cff">View project →</text>`;
+  y += 18;
+  const commitsStr = totalCommits != null ? `${totalCommits} commits` : "— commits";
+  const locStr = additions >= 1000 ? `${(additions / 1000).toFixed(1)}K` : String(additions);
+  body += `<text x="${PAD}" y="${y}" style="font-size:9.5px;fill:#6c7689">${commitsStr} · ${locStr} loc · updated ${relativeTime(repoData.pushed_at)}</text>`;
+  const h = y + 20;
 
-  return `${heroSvg}\n<g transform="translate(${HERO_W + GAP}, 0)">\n${sideSvg}\n</g>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${CW}" height="${h}" viewBox="0 0 ${CW} ${h}" role="img" aria-label="${escXml(spec.display)}">
+<defs>
+  <style>
+    text { font-family: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Consolas, monospace; fill: #e7ebf3; }
+  </style>
+  <clipPath id="imgClip"><path d="M0 14 a14 14 0 0 1 14 -14 h${CW - 28} a14 14 0 0 1 14 14 v${IMG_H - 14} h-${CW} z"/></clipPath>
+</defs>
+<rect width="${CW}" height="${h}" rx="14" fill="#10151d"/>
+${body}
+</svg>`;
 }
 
 // shared by GH-ACTIVITY and the monthly stat - one fetch of GitHub's own
@@ -666,37 +680,38 @@ ${endTag}`;
   }
 
   {
-    const beginTag = `<!-- GH-PROJECTS:BEGIN -->`;
-    const endTag = `<!-- GH-PROJECTS:END -->`;
-    const beginIdx = svg.indexOf(beginTag);
-    const endIdx = svg.indexOf(endTag);
-    if (beginIdx === -1 || endIdx === -1) {
-      console.warn("[skip] markers for GH-PROJECTS not found in " + SVG_PATH);
-    } else {
-      const spotlight = await buildHighlightedProjects(USERNAME, [
-        {
-          repo: "The_Forge",
-          display: "The Forge",
-          desc: "A gym management website built around three roles - members book classes, trainers manage schedules, admins run the show.",
-        },
-        {
-          repo: "Bob_The_Destructor",
-          display: "Bob the Destructor",
-          desc: "Five caves, one miner, endless ore - how deep can you dig?",
-        },
-        {
-          repo: "LCode",
-          display: "LCode",
-          desc: "Minix had no code editor, so we built one - and used it to test real hardware drivers.",
-        },
-      ]);
-      if (!spotlight) {
-        console.warn("[skip] GH-PROJECTS: build failed, keeping existing content");
+    const forgeBanner = (await readFile("cards/assets/the-forge-banner.png")).toString("base64");
+    const bobBanner = (await readFile("cards/assets/bob-the-destructor-banner.png")).toString("base64");
+
+    const cardSpecs = [
+      {
+        repo: "The_Forge",
+        display: "The Forge",
+        desc: "A gym management website built around three roles - members book classes, trainers manage schedules, admins run the show.",
+        banner: `<image href="data:image/png;base64,${forgeBanner}" x="0" y="0" width="320" height="140" preserveAspectRatio="xMidYMid slice"/>`,
+        file: "cards/the-forge.svg",
+      },
+      {
+        repo: "Bob_The_Destructor",
+        display: "Bob the Destructor",
+        desc: "Five caves, one miner, endless ore - how deep can you dig? Mine smarter and outlast every collapse.",
+        banner: `<image href="data:image/png;base64,${bobBanner}" x="0" y="0" width="320" height="140" preserveAspectRatio="xMidYMid slice"/>`,
+        file: "cards/bob-the-destructor.svg",
+      },
+    ];
+
+    for (const spec of cardSpecs) {
+      const card = await buildProjectCard(USERNAME, spec);
+      if (!card) {
+        console.warn(`[skip] ${spec.file}: build failed, keeping existing content`);
+        continue;
+      }
+      const existing = await readFile(spec.file, "utf8").catch(() => null);
+      if (existing !== card) {
+        await writeFile(spec.file, card, "utf8");
+        console.log(`[ok] ${spec.file} refreshed (real repo data)`);
       } else {
-        const replacement = `${beginTag}\n${spotlight}\n${endTag}`;
-        svg = svg.slice(0, beginIdx) + replacement + svg.slice(endIdx + endTag.length);
-        changed = true;
-        console.log("[ok] GH-PROJECTS refreshed (real repo data)");
+        console.log(`[ok] ${spec.file} unchanged`);
       }
     }
   }
