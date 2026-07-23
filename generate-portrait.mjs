@@ -76,9 +76,11 @@ const RAMP = [
   "c", "C", "o", "X", "U", "O", "w", "m", "%", "&",
   "B", "#", "8", "@", "W", "W",
 ];
+// neutral grayscale ramp (dark -> white) - renders the portrait as a black &
+// white photo on the dark portrait card instead of the earlier blue tint
 const PALETTE = [
-  "#0a0e14", "#0e1c33", "#123152", "#154977", "#1a66a3",
-  "#2483c9", "#3d9eec", "#6ebbf5", "#9fd2f8", "#cfe8fb", "#f2f8fe",
+  "#0d0d0d", "#1f1f1f", "#333333", "#4d4d4d", "#666666",
+  "#808080", "#999999", "#b3b3b3", "#cccccc", "#e6e6e6", "#ffffff",
 ];
 
 function escXml(s) {
