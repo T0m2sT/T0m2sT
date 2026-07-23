@@ -396,7 +396,7 @@
 <rect x="-6" y="56" width="442" height="30" rx="6" fill="#ffffff08"/><text x="0" y="80" style="font-size:16px;fill:#8b93a3">Issues</text><text x="430" y="80" text-anchor="end" style="font-size:18px;font-weight:700">0</text>
 <text x="0" y="110" style="font-size:16px;fill:#8b93a3">Repos Touched</text><text x="430" y="110" text-anchor="end" style="font-size:18px;font-weight:700">16</text>
 <rect x="-6" y="116" width="442" height="30" rx="6" fill="#ffffff08"/><text x="0" y="140" style="font-size:16px;fill:#8b93a3">Lines</text><text x="430" y="140" text-anchor="end" style="font-size:18px;font-weight:700">170,929 <tspan dx="-3" style="font-size:16px">(<tspan fill="#3ddc84">206,129++</tspan>, <tspan fill="#ff5c5c">35,200--</tspan>)</tspan></text>
-<text x="0" y="170" style="font-size:16px;fill:#8b93a3">Rank</text><text x="430" y="170" text-anchor="end" style="font-size:18px;font-weight:700;fill:#3ddc84">A+</text>
+<text x="0" y="170" style="font-size:16px;fill:#8b93a3">Rank</text><text x="430" y="170" text-anchor="end" style="font-size:18px;font-weight:700">A+</text>
 <!-- GH-STATS:END -->
     </g>
     <rect x="490" y="0" width="470" height="227" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/>
