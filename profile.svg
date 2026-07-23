@@ -35,7 +35,8 @@
       <rect x="0" y="0" width="340" height="597" rx="16"/>
     </clipPath>
   </defs>
-  <rect x="0" y="0" width="1000" height="884" fill="#010409"/>
+  <!-- transparent canvas: GitHub's page color (light or dark) shows through the gaps -->
+  <rect x="0" y="0" width="1000" height="884" fill="none"/>
   <!-- portrait -->
   <g transform="translate(20, 20)">
     <rect x="0" y="0" width="340" height="597" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/>
