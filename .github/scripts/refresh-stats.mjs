@@ -211,9 +211,9 @@ async function buildStatsLedger(username, width) {
   const lines = rows
     .map(([k, v], i) => {
       const y = i * rowH;
-      const bg = i % 2 === 0 ? `<rect x="-6" y="${y - 4}" width="${width + 12}" height="${rowH}" rx="6" fill="#ffffff08"/>` : "";
+      const bg = i % 2 === 0 ? `<rect x="-6" y="${y - 4}" width="${width + 12}" height="${rowH}" rx="6" class="row-stripe"/>` : "";
       const valueColor = k === "Rank" ? ";fill:#3ddc84" : "";
-      return `${bg}<text x="0" y="${y + 20}" style="font-size:16px;fill:#8b93a3">${k}</text><text x="${width}" y="${y + 20}" text-anchor="end" style="font-size:18px;font-weight:700${valueColor}">${v}</text>`;
+      return `${bg}<text x="0" y="${y + 20}" class="stat-key" style="font-size:16px">${k}</text><text x="${width}" y="${y + 20}" text-anchor="end" style="font-size:18px;font-weight:700${valueColor}">${v}</text>`;
     })
     .join("\n");
 
@@ -417,38 +417,55 @@ async function buildProjectCard(username, spec) {
   const descBlockH = 3 * 17; // reserve fixed space for 3 lines regardless of actual wrap
   let y = IMG_H + 26;
   let body = `<g clip-path="url(#imgClip)">${spec.banner}</g>`;
-  body += `<text x="${PAD}" y="${y}" style="font-family:ui-sans-serif,-apple-system,'Segoe UI',system-ui,sans-serif;font-size:16px;font-weight:800;fill:#e7ebf3">${escXml(spec.display)}</text>`;
+  body += `<text x="${PAD}" y="${y}" class="title" style="font-family:ui-sans-serif,-apple-system,'Segoe UI',system-ui,sans-serif;font-size:16px;font-weight:800">${escXml(spec.display)}</text>`;
   y += 24;
   const descTop = y;
   for (const l of descLines) {
-    body += `<text x="${PAD}" y="${y}" style="font-family:ui-sans-serif,-apple-system,'Segoe UI',system-ui,sans-serif;font-size:11.5px;fill:#c9d1d9">${escXml(l)}</text>`;
+    body += `<text x="${PAD}" y="${y}" class="desc" style="font-family:ui-sans-serif,-apple-system,'Segoe UI',system-ui,sans-serif;font-size:11.5px">${escXml(l)}</text>`;
     y += 17;
   }
   y = descTop + descBlockH + 10;
   let tx = PAD;
   for (const tag of tags) {
     const w = tag.length * 7 + 20;
-    body += `<rect x="${tx}" y="${y - 13}" width="${w}" height="22" rx="11" fill="#141a26" stroke="#ffffff14"/><text x="${tx + w / 2}" y="${y + 2}" text-anchor="middle" style="font-size:10px;font-weight:700;fill:#4f8cff">${escXml(tag)}</text>`;
+    body += `<rect x="${tx}" y="${y - 13}" width="${w}" height="22" rx="11" class="pill"/><text x="${tx + w / 2}" y="${y + 2}" text-anchor="middle" class="accent" style="font-size:10px;font-weight:700">${escXml(tag)}</text>`;
     tx += w + 7;
   }
   y += 30;
-  body += `<line x1="${PAD}" y1="${y}" x2="${CW - PAD}" y2="${y}" stroke="#ffffff14"/>`;
+  body += `<line x1="${PAD}" y1="${y}" x2="${CW - PAD}" y2="${y}" class="divider"/>`;
   y += 24;
-  body += `<text x="${PAD}" y="${y}" style="font-family:ui-sans-serif,-apple-system,'Segoe UI',system-ui,sans-serif;font-size:11.5px;font-weight:700;fill:#4f8cff">View project →</text>`;
+  body += `<text x="${PAD}" y="${y}" class="accent" style="font-family:ui-sans-serif,-apple-system,'Segoe UI',system-ui,sans-serif;font-size:11.5px;font-weight:700">View project →</text>`;
   y += 18;
   const commitsStr = totalCommits != null ? `${totalCommits} commits` : "— commits";
   const locStr = additions >= 1000 ? `${(additions / 1000).toFixed(1)}K` : String(additions);
-  body += `<text x="${PAD}" y="${y}" style="font-size:9.5px;fill:#6c7689">${commitsStr} · ${locStr} loc · updated ${relativeTime(repoData.pushed_at)}</text>`;
+  body += `<text x="${PAD}" y="${y}" class="muted" style="font-size:9.5px">${commitsStr} · ${locStr} loc · updated ${relativeTime(repoData.pushed_at)}</text>`;
   const h = y + 20;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${CW}" height="${h}" viewBox="0 0 ${CW} ${h}" role="img" aria-label="${escXml(spec.display)}">
 <defs>
   <style>
     text { font-family: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Consolas, monospace; fill: #e7ebf3; }
+    .card-bg { fill: #10151d; stroke: none; }
+    .title { fill: #e7ebf3; }
+    .desc { fill: #c9d1d9; }
+    .muted { fill: #6c7689; }
+    .accent { fill: #4f8cff; }
+    .pill { fill: #141a26; stroke: #ffffff14; }
+    .divider { stroke: #ffffff14; }
+    @media (prefers-color-scheme: light) {
+      text { fill: #1f2328; }
+      .card-bg { fill: #ffffff; stroke: #d0d7de; }
+      .title { fill: #1f2328; }
+      .desc { fill: #59636e; }
+      .muted { fill: #59636e; }
+      .accent { fill: #0969da; }
+      .pill { fill: #f6f8fa; stroke: #d0d7de; }
+      .divider { stroke: #d0d7de; }
+    }
   </style>
   <clipPath id="imgClip"><path d="M0 14 a14 14 0 0 1 14 -14 h${CW - 28} a14 14 0 0 1 14 14 v${IMG_H - 14} h-${CW} z"/></clipPath>
 </defs>
-<rect width="${CW}" height="${h}" rx="14" fill="#10151d"/>
+<rect x="0.5" y="0.5" width="${CW - 1}" height="${h - 1}" rx="14" class="card-bg"/>
 ${body}
 </svg>`;
 }
@@ -618,9 +635,9 @@ async function main() {
         console.warn("[skip] GH-MONTHSTAT: build failed, keeping existing content");
       } else {
         const replacement = `${beginTag}
-<text x="0" y="0" text-anchor="end" style="font-size:11.5px;fill:#6c7689;letter-spacing:.05em">${stat.monthName.toUpperCase()}</text>
-<text x="0" y="30" text-anchor="end" style="font-size:30px;font-weight:800;fill:#e7ebf3">${stat.count}</text>
-<text x="0" y="51" text-anchor="end" style="font-size:12.5px;font-weight:700;fill:#4f8cff">${stat.pct}% of total ▲</text>
+<text x="0" y="0" text-anchor="end" class="muted" style="font-size:11.5px;letter-spacing:.05em">${stat.monthName.toUpperCase()}</text>
+<text x="0" y="30" text-anchor="end" class="big-num" style="font-size:30px;font-weight:800">${stat.count}</text>
+<text x="0" y="51" text-anchor="end" class="accent" style="font-size:12.5px;font-weight:700">${stat.pct}% of total ▲</text>
 ${endTag}`;
         svg = svg.slice(0, beginIdx) + replacement + svg.slice(endIdx + endTag.length);
         changed = true;
@@ -664,9 +681,9 @@ ${endTag}`;
       } else {
         const replacement = `${beginTag}
 <g transform="translate(580, 28)">
-<text text-anchor="end" y="0" style="font-size:11.5px;fill:#6c7689;letter-spacing:.05em">ALL-TIME</text>
-<text text-anchor="end" y="30" style="font-size:30px;font-weight:800;fill:#e7ebf3;font-family:ui-monospace,monospace">${quote.total}</text>
-<text text-anchor="end" y="51" style="font-size:12.5px;font-weight:700;fill:#4f8cff">${quote.longest}d best streak</text>
+<text text-anchor="end" y="0" class="muted" style="font-size:11.5px;letter-spacing:.05em">ALL-TIME</text>
+<text text-anchor="end" y="30" class="big-num" style="font-size:30px;font-weight:800;font-family:ui-monospace,monospace">${quote.total}</text>
+<text text-anchor="end" y="51" class="accent" style="font-size:12.5px;font-weight:700">${quote.longest}d best streak</text>
 </g>
 <g transform="translate(20, 80)">
 ${candles}

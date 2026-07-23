@@ -19,9 +19,36 @@
       .tab-text { font-size: 12.5px; font-weight: 600; fill: #6c7689; }
       .tab-text-active { font-size: 12.5px; font-weight: 700; fill: #eef4ff; }
       .tab-link:hover .tab-hit { fill: #1a2231; }
+      /* themeable surfaces + inline-styled generated text (light overrides below).
+         The portrait card keeps its own hard-coded dark fill so the blue-ramp
+         portrait always sits on dark, in either mode. */
+      .card { fill: #10151d; stroke: #ffffff14; }
+      .row-stripe { fill: #ffffff08; }
+      .muted { fill: #6c7689; }
+      .stat-key { fill: #8b93a3; }
+      .accent { fill: #4f8cff; }
+      .big-num { fill: #e7ebf3; }
+      .card-shadow { flood-color: #000000; flood-opacity: 0.5; }
+      @media (prefers-color-scheme: light) {
+        text { fill: #1f2328; }
+        .sym { fill: #1f2328; }
+        .sub { fill: #59636e; }
+        .lbl { fill: #0969da; }
+        .section-lbl { fill: #1f2328; }
+        .tab-text { fill: #59636e; }
+        .tab-text-active { fill: #ffffff; }
+        .tab-link:hover .tab-hit { fill: #eaeef2; }
+        .card { fill: #ffffff; stroke: #d0d7de; }
+        .row-stripe { fill: #f6f8fa; }
+        .muted { fill: #59636e; }
+        .stat-key { fill: #59636e; }
+        .accent { fill: #0969da; }
+        .big-num { fill: #1f2328; }
+        .card-shadow { flood-color: #9aa4b2; flood-opacity: 0.35; }
+      }
     </style>
     <filter id="cardShadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000000" flood-opacity="0.5"/>
+      <feDropShadow class="card-shadow" dx="0" dy="10" stdDeviation="16" flood-color="#000000" flood-opacity="0.5"/>
     </filter>
     <linearGradient id="trophyGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#171f30"/>
@@ -291,15 +318,15 @@
   </g>
   <!-- ticker + chart widget (matches portrait height) -->
   <g transform="translate(380, 20)">
-    <rect x="0" y="0" width="600" height="340" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="600" height="340" rx="16" class="card" stroke-width="1" filter="url(#cardShadow)"/>
     <rect x="0" y="0" width="600" height="340" rx="16" fill="url(#cardSheen)"/>
     <text x="20" y="34" class="sym">$T0M2ST</text>
     <text x="20" y="52" class="sub">Vice President (Internal) @ ACM FEUP</text>
     <g transform="translate(580, 28)">
       <!-- GH-MONTHSTAT:BEGIN -->
-<text x="0" y="0" text-anchor="end" style="font-size:11.5px;fill:#6c7689;letter-spacing:.05em">JUL</text>
-<text x="0" y="30" text-anchor="end" style="font-size:30px;font-weight:800;fill:#e7ebf3">72</text>
-<text x="0" y="51" text-anchor="end" style="font-size:12.5px;font-weight:700;fill:#4f8cff">5.6% of total ▲</text>
+<text x="0" y="0" text-anchor="end" class="muted" style="font-size:11.5px;letter-spacing:.05em">JUL</text>
+<text x="0" y="30" text-anchor="end" class="big-num" style="font-size:30px;font-weight:800">72</text>
+<text x="0" y="51" text-anchor="end" class="accent" style="font-size:12.5px;font-weight:700">5.6% of total ▲</text>
 <!-- GH-MONTHSTAT:END -->
     </g>
     <g transform="translate(20, 78)">
@@ -348,14 +375,14 @@
   </g>
   <!-- total contributions -->
   <g transform="translate(380, 380)">
-    <rect x="0" y="0" width="600" height="237" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="600" height="237" rx="16" class="card" stroke-width="1" filter="url(#cardShadow)"/>
     <rect x="0" y="0" width="600" height="237" rx="16" fill="url(#cardSheen)"/>
     <text x="20" y="24" class="lbl">Total Contributions</text>
     <!-- GH-STREAK:BEGIN -->
 <g transform="translate(580, 28)">
-<text text-anchor="end" y="0" style="font-size:11.5px;fill:#6c7689;letter-spacing:.05em">ALL-TIME</text>
-<text text-anchor="end" y="30" style="font-size:30px;font-weight:800;fill:#e7ebf3;font-family:ui-monospace,monospace">1,276</text>
-<text text-anchor="end" y="51" style="font-size:12.5px;font-weight:700;fill:#4f8cff">11d best streak</text>
+<text text-anchor="end" y="0" class="muted" style="font-size:11.5px;letter-spacing:.05em">ALL-TIME</text>
+<text text-anchor="end" y="30" class="big-num" style="font-size:30px;font-weight:800;font-family:ui-monospace,monospace">1,276</text>
+<text text-anchor="end" y="51" class="accent" style="font-size:12.5px;font-weight:700">11d best streak</text>
 </g>
 <g transform="translate(20, 80)">
 <line x1="8.7" y1="139.0" x2="8.7" y2="139.0" stroke="#3ddc84" stroke-width="1.5"/><rect x="0.0" y="138.3" width="17.3" height="1.5" rx="1" fill="#3ddc84"/>
@@ -387,20 +414,20 @@
   </g>
   <!-- github stats + languages -->
   <g transform="translate(20, 637)">
-    <rect x="0" y="0" width="470" height="227" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="470" height="227" rx="16" class="card" stroke-width="1" filter="url(#cardShadow)"/>
     <rect x="0" y="0" width="470" height="227" rx="16" fill="url(#cardSheen)"/>
     <text x="20" y="24" class="lbl">GitHub Stats</text>
     <g transform="translate(20, 40)">
       <!-- GH-STATS:BEGIN -->
-<rect x="-6" y="-4" width="442" height="30" rx="6" fill="#ffffff08"/><text x="0" y="20" style="font-size:16px;fill:#8b93a3">Total Stars</text><text x="430" y="20" text-anchor="end" style="font-size:18px;font-weight:700">1</text>
-<text x="0" y="50" style="font-size:16px;fill:#8b93a3">Pull Requests</text><text x="430" y="50" text-anchor="end" style="font-size:18px;font-weight:700">13</text>
-<rect x="-6" y="56" width="442" height="30" rx="6" fill="#ffffff08"/><text x="0" y="80" style="font-size:16px;fill:#8b93a3">Issues</text><text x="430" y="80" text-anchor="end" style="font-size:18px;font-weight:700">0</text>
-<text x="0" y="110" style="font-size:16px;fill:#8b93a3">Repos Touched</text><text x="430" y="110" text-anchor="end" style="font-size:18px;font-weight:700">16</text>
-<rect x="-6" y="116" width="442" height="30" rx="6" fill="#ffffff08"/><text x="0" y="140" style="font-size:16px;fill:#8b93a3">Lines</text><text x="430" y="140" text-anchor="end" style="font-size:18px;font-weight:700">170,929 <tspan dx="-3" style="font-size:16px">(<tspan fill="#3ddc84">206,129++</tspan>, <tspan fill="#ff5c5c">35,200--</tspan>)</tspan></text>
-<text x="0" y="170" style="font-size:16px;fill:#8b93a3">Rank</text><text x="430" y="170" text-anchor="end" style="font-size:18px;font-weight:700">A+</text>
+<rect x="-6" y="-4" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="20" class="stat-key" style="font-size:16px">Total Stars</text><text x="430" y="20" text-anchor="end" style="font-size:18px;font-weight:700">1</text>
+<text x="0" y="50" class="stat-key" style="font-size:16px">Pull Requests</text><text x="430" y="50" text-anchor="end" style="font-size:18px;font-weight:700">13</text>
+<rect x="-6" y="56" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="80" class="stat-key" style="font-size:16px">Issues</text><text x="430" y="80" text-anchor="end" style="font-size:18px;font-weight:700">0</text>
+<text x="0" y="110" class="stat-key" style="font-size:16px">Repos Touched</text><text x="430" y="110" text-anchor="end" style="font-size:18px;font-weight:700">16</text>
+<rect x="-6" y="116" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="140" class="stat-key" style="font-size:16px">Lines</text><text x="430" y="140" text-anchor="end" style="font-size:18px;font-weight:700">170,929 <tspan dx="-3" style="font-size:16px">(<tspan fill="#3ddc84">206,129++</tspan>, <tspan fill="#ff5c5c">35,200--</tspan>)</tspan></text>
+<text x="0" y="170" class="stat-key" style="font-size:16px">Rank</text><text x="430" y="170" text-anchor="end" style="font-size:18px;font-weight:700">A+</text>
 <!-- GH-STATS:END -->
     </g>
-    <rect x="490" y="0" width="470" height="227" rx="16" fill="#10151d" stroke="#ffffff14" stroke-width="1" filter="url(#cardShadow)"/>
+    <rect x="490" y="0" width="470" height="227" rx="16" class="card" stroke-width="1" filter="url(#cardShadow)"/>
     <rect x="490" y="0" width="470" height="227" rx="16" fill="url(#cardSheen)"/>
     <text x="510" y="24" class="lbl">Tech Stack</text>
     <g transform="translate(510, 44)">
