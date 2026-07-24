@@ -467,7 +467,7 @@ async function buildProjectCard(username, spec) {
       .accent { fill: #0969da; }
       .pill { fill: #f6f8fa; stroke: #d0d7de; }
       .divider { stroke: #d0d7de; }
-      .card-glow { flood-color: #4f8cff; flood-opacity: 0.10; }
+      .card-glow { flood-color: #4f8cff; flood-opacity: 0.16; }
     }
   </style>
   <filter id="cardGlow" x="-25%" y="-25%" width="150%" height="150%">

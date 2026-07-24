@@ -44,7 +44,7 @@
         .stat-key { fill: #59636e; }
         .accent { fill: #0969da; }
         .big-num { fill: #1f2328; }
-        .card-glow { flood-color: #4f8cff; flood-opacity: 0.10; }
+        .card-glow { flood-color: #4f8cff; flood-opacity: 0.16; }
       }
     </style>
     <filter id="cardGlow" x="-25%" y="-25%" width="150%" height="150%">
