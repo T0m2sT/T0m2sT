@@ -47,17 +47,17 @@ function buildRangeTabs(username) {
     const x = i * (tabW + gap);
     const fill = r.active ? "#4f8cff" : "transparent";
     const textClass = r.active ? "tab-text-active" : "tab-text";
-    return `<a class="tab-link" xlink:href="https://github.com/${username}?tab=overview&amp;from=${r.from}&amp;to=${to}">
+    return `<g class="tab-link">
         <rect class="tab-hit" x="${x}" y="0" width="${tabW}" height="${tabH}" rx="12" fill="${fill}"/>
         <text x="${x + tabW / 2}" y="16" text-anchor="middle" class="${textClass}">${r.label}</text>
-      </a>`;
+      </g>`;
   });
 
   const allX = ranges.length * (tabW + gap);
-  tabs.push(`<a class="tab-link" xlink:href="https://github.com/${username}">
+  tabs.push(`<g class="tab-link">
         <rect class="tab-hit" x="${allX}" y="0" width="${tabW}" height="${tabH}" rx="12" fill="transparent"/>
         <text x="${allX + tabW / 2}" y="16" text-anchor="middle" class="tab-text">ALL</text>
-      </a>`);
+      </g>`);
 
   return tabs.join("\n      ");
 }
@@ -212,7 +212,7 @@ async function buildStatsLedger(username, width) {
     .map(([k, v], i) => {
       const y = i * rowH;
       const bg = i % 2 === 0 ? `<rect x="-6" y="${y - 4}" width="${width + 12}" height="${rowH}" rx="6" class="row-stripe"/>` : "";
-      const valueColor = k === "Rank" ? ";fill:#3ddc84" : "";
+      const valueColor = "";
       return `${bg}<text x="0" y="${y + 20}" class="stat-key" style="font-size:16px">${k}</text><text x="${width}" y="${y + 20}" text-anchor="end" style="font-size:18px;font-weight:700${valueColor}">${v}</text>`;
     })
     .join("\n");
