@@ -424,7 +424,7 @@
 <rect x="-6" y="56" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="80" class="stat-key" style="font-size:16px">Issues</text><text x="430" y="80" text-anchor="end" style="font-size:18px;font-weight:700">0</text>
 <text x="0" y="110" class="stat-key" style="font-size:16px">Repos Touched</text><text x="430" y="110" text-anchor="end" style="font-size:18px;font-weight:700">16</text>
 <rect x="-6" y="116" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="140" class="stat-key" style="font-size:16px">Lines</text><text x="430" y="140" text-anchor="end" style="font-size:18px;font-weight:700">171,037 <tspan dx="-3" style="font-size:16px">(<tspan fill="#3ddc84">207,311++</tspan>, <tspan fill="#ff5c5c">36,274--</tspan>)</tspan></text>
-<text x="0" y="170" class="stat-key" style="font-size:16px">Rank</text><text x="430" y="170" text-anchor="end" style="font-size:18px;font-weight:700;fill:#3ddc84">A+</text>
+<text x="0" y="170" class="stat-key" style="font-size:16px">Rank</text><text x="430" y="170" text-anchor="end" style="font-size:18px;font-weight:700">A+</text>
 <!-- GH-STATS:END -->
     </g>
     <rect x="490" y="0" width="470" height="227" rx="16" class="card" stroke-width="1" filter="url(#cardGlow)"/>
