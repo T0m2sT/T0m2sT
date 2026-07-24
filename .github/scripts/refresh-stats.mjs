@@ -441,7 +441,12 @@ async function buildProjectCard(username, spec) {
   body += `<text x="${PAD}" y="${y}" class="muted" style="font-size:9.5px">${commitsStr} · ${locStr} loc · updated ${relativeTime(repoData.pushed_at)}</text>`;
   const h = y + 20;
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${CW}" height="${h}" viewBox="0 0 ${CW} ${h}" role="img" aria-label="${escXml(spec.display)}">
+  // transparent padding around the card so the soft blue outer glow has room
+  // to render instead of being clipped at the SVG canvas edge. Kept small so
+  // the cards still butt up close in the README (~20px inter-card gap = 2*GP).
+  const GP = 10;
+  const W = CW + GP * 2, H = h + GP * 2;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escXml(spec.display)}">
 <defs>
   <style>
     text { font-family: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Consolas, monospace; fill: #e7ebf3; }
@@ -452,6 +457,7 @@ async function buildProjectCard(username, spec) {
     .accent { fill: #4f8cff; }
     .pill { fill: #141a26; stroke: #ffffff14; }
     .divider { stroke: #ffffff14; }
+    .card-glow { flood-color: #4f8cff; flood-opacity: 0.32; }
     @media (prefers-color-scheme: light) {
       text { fill: #1f2328; }
       .card-bg { fill: #ffffff; stroke: #d0d7de; }
@@ -461,12 +467,18 @@ async function buildProjectCard(username, spec) {
       .accent { fill: #0969da; }
       .pill { fill: #f6f8fa; stroke: #d0d7de; }
       .divider { stroke: #d0d7de; }
+      .card-glow { flood-color: #4f8cff; flood-opacity: 0.20; }
     }
   </style>
+  <filter id="cardGlow" x="-25%" y="-25%" width="150%" height="150%">
+    <feDropShadow class="card-glow" dx="0" dy="0" stdDeviation="6" flood-color="#4f8cff" flood-opacity="0.32"/>
+  </filter>
   <clipPath id="imgClip"><path d="M0 14 a14 14 0 0 1 14 -14 h${CW - 28} a14 14 0 0 1 14 14 v${IMG_H - 14} h-${CW} z"/></clipPath>
 </defs>
-<rect x="0.5" y="0.5" width="${CW - 1}" height="${h - 1}" rx="14" class="card-bg"/>
+<g transform="translate(${GP}, ${GP})">
+<rect x="0.5" y="0.5" width="${CW - 1}" height="${h - 1}" rx="14" class="card-bg" filter="url(#cardGlow)"/>
 ${body}
+</g>
 </svg>`;
 }
 
