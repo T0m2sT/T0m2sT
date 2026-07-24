@@ -322,8 +322,8 @@
     <g transform="translate(580, 28)">
       <!-- GH-MONTHSTAT:BEGIN -->
 <text x="0" y="0" text-anchor="end" class="muted" style="font-size:11.5px;letter-spacing:.05em">JUL</text>
-<text x="0" y="30" text-anchor="end" class="big-num" style="font-size:30px;font-weight:800">84</text>
-<text x="0" y="51" text-anchor="end" class="accent" style="font-size:12.5px;font-weight:700">6.5% of total ▲</text>
+<text x="0" y="30" text-anchor="end" class="big-num" style="font-size:30px;font-weight:800">85</text>
+<text x="0" y="51" text-anchor="end" class="accent" style="font-size:12.5px;font-weight:700">6.6% of total ▲</text>
 <!-- GH-MONTHSTAT:END -->
     </g>
     <g transform="translate(20, 78)">
@@ -362,8 +362,8 @@
       <stop offset="100%" stop-color="#4f8cff" stop-opacity="0"/>
     </linearGradient>
   </defs>
-  <polygon points="0.0,198.0 19.3,191.8 38.6,191.8 57.9,183.5 77.2,183.5 96.6,183.5 115.9,183.5 135.2,183.5 154.5,183.5 173.8,183.5 193.1,183.5 212.4,183.5 231.7,183.5 251.0,183.5 270.3,183.5 289.7,183.5 309.0,171.1 328.3,148.4 347.6,148.4 366.9,129.8 386.2,117.4 405.5,92.6 424.8,86.4 444.1,86.4 463.4,86.4 482.8,47.2 502.1,36.9 521.4,36.9 540.7,24.5 560.0,10.0 560,202 0,202" fill="url(#activityFill)"/>
-  <polyline points="0.0,198.0 19.3,191.8 38.6,191.8 57.9,183.5 77.2,183.5 96.6,183.5 115.9,183.5 135.2,183.5 154.5,183.5 173.8,183.5 193.1,183.5 212.4,183.5 231.7,183.5 251.0,183.5 270.3,183.5 289.7,183.5 309.0,171.1 328.3,148.4 347.6,148.4 366.9,129.8 386.2,117.4 405.5,92.6 424.8,86.4 444.1,86.4 463.4,86.4 482.8,47.2 502.1,36.9 521.4,36.9 540.7,24.5 560.0,10.0" fill="none" stroke="#4f8cff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="0.0,198.0 19.3,191.9 38.6,191.9 57.9,183.7 77.2,183.7 96.6,183.7 115.9,183.7 135.2,183.7 154.5,183.7 173.8,183.7 193.1,183.7 212.4,183.7 231.7,183.7 251.0,183.7 270.3,183.7 289.7,183.7 309.0,171.4 328.3,149.0 347.6,149.0 366.9,130.6 386.2,118.3 405.5,93.8 424.8,87.7 444.1,87.7 463.4,87.7 482.8,48.8 502.1,38.6 521.4,38.6 540.7,26.3 560.0,10.0 560,202 0,202" fill="url(#activityFill)"/>
+  <polyline points="0.0,198.0 19.3,191.9 38.6,191.9 57.9,183.7 77.2,183.7 96.6,183.7 115.9,183.7 135.2,183.7 154.5,183.7 173.8,183.7 193.1,183.7 212.4,183.7 231.7,183.7 251.0,183.7 270.3,183.7 289.7,183.7 309.0,171.4 328.3,149.0 347.6,149.0 366.9,130.6 386.2,118.3 405.5,93.8 424.8,87.7 444.1,87.7 463.4,87.7 482.8,48.8 502.1,38.6 521.4,38.6 540.7,26.3 560.0,10.0" fill="none" stroke="#4f8cff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
   <circle cx="560" cy="10" r="4" fill="#4f8cff"/>
   <circle cx="560" cy="10" r="8" fill="#4f8cff" opacity="0.25"/>
 </svg>
@@ -378,7 +378,7 @@
     <!-- GH-STREAK:BEGIN -->
 <g transform="translate(580, 28)">
 <text text-anchor="end" y="0" class="muted" style="font-size:11.5px;letter-spacing:.05em">ALL-TIME</text>
-<text text-anchor="end" y="30" class="big-num" style="font-size:30px;font-weight:800;font-family:ui-monospace,monospace">1,288</text>
+<text text-anchor="end" y="30" class="big-num" style="font-size:30px;font-weight:800;font-family:ui-monospace,monospace">1,289</text>
 <text text-anchor="end" y="51" class="accent" style="font-size:12.5px;font-weight:700">11d best streak</text>
 </g>
 <g transform="translate(20, 80)">
@@ -405,7 +405,7 @@
 <line x1="475.3" y1="131.5" x2="475.3" y2="139.0" stroke="#3ddc84" stroke-width="1.5"/><rect x="466.7" y="138.3" width="17.3" height="1.5" rx="1" fill="#3ddc84"/>
 <line x1="498.7" y1="139.0" x2="498.7" y2="139.0" stroke="#3ddc84" stroke-width="1.5"/><rect x="490.0" y="138.3" width="17.3" height="1.5" rx="1" fill="#3ddc84"/>
 <line x1="522.0" y1="116.5" x2="522.0" y2="139.0" stroke="#ff5c5c" stroke-width="1.5"/><rect x="513.3" y="127.7" width="17.3" height="5.6" rx="1" fill="#ff5c5c"/>
-<line x1="545.3" y1="103.3" x2="545.3" y2="139.0" stroke="#3ddc84" stroke-width="1.5"/><rect x="536.7" y="125.9" width="17.3" height="13.1" rx="1" fill="#3ddc84"/>
+<line x1="545.3" y1="103.3" x2="545.3" y2="139.0" stroke="#3ddc84" stroke-width="1.5"/><rect x="536.7" y="124.0" width="17.3" height="15.0" rx="1" fill="#3ddc84"/>
 </g>
 <!-- GH-STREAK:END -->
   </g>
@@ -420,7 +420,7 @@
 <text x="0" y="50" class="stat-key" style="font-size:16px">Pull Requests</text><text x="430" y="50" text-anchor="end" style="font-size:18px;font-weight:700">13</text>
 <rect x="-6" y="56" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="80" class="stat-key" style="font-size:16px">Issues</text><text x="430" y="80" text-anchor="end" style="font-size:18px;font-weight:700">0</text>
 <text x="0" y="110" class="stat-key" style="font-size:16px">Repos Touched</text><text x="430" y="110" text-anchor="end" style="font-size:18px;font-weight:700">16</text>
-<rect x="-6" y="116" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="140" class="stat-key" style="font-size:16px">Lines</text><text x="430" y="140" text-anchor="end" style="font-size:18px;font-weight:700">171,034 <tspan dx="-3" style="font-size:16px">(<tspan fill="#3ddc84">207,327++</tspan>, <tspan fill="#ff5c5c">36,293--</tspan>)</tspan></text>
+<rect x="-6" y="116" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="140" class="stat-key" style="font-size:16px">Lines</text><text x="430" y="140" text-anchor="end" style="font-size:18px;font-weight:700">171,037 <tspan dx="-3" style="font-size:16px">(<tspan fill="#3ddc84">207,332++</tspan>, <tspan fill="#ff5c5c">36,295--</tspan>)</tspan></text>
 <text x="0" y="170" class="stat-key" style="font-size:16px">Rank</text><text x="430" y="170" text-anchor="end" style="font-size:18px;font-weight:700">A+</text>
 <!-- GH-STATS:END -->
     </g>
