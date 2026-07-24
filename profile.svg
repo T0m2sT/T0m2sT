@@ -28,7 +28,7 @@
       .stat-key { fill: #8b93a3; }
       .accent { fill: #4f8cff; }
       .big-num { fill: #e7ebf3; }
-      .card-glow { flood-color: #4f8cff; flood-opacity: 0.32; }
+      .card-glow { flood-color: #4f8cff; flood-opacity: 0.16; }
       @media (prefers-color-scheme: light) {
         text { fill: #1f2328; }
         .sym { fill: #1f2328; }
@@ -44,11 +44,11 @@
         .stat-key { fill: #59636e; }
         .accent { fill: #0969da; }
         .big-num { fill: #1f2328; }
-        .card-glow { flood-color: #4f8cff; flood-opacity: 0.20; }
+        .card-glow { flood-color: #4f8cff; flood-opacity: 0.10; }
       }
     </style>
     <filter id="cardGlow" x="-25%" y="-25%" width="150%" height="150%">
-      <feDropShadow class="card-glow" dx="0" dy="0" stdDeviation="6" flood-color="#4f8cff" flood-opacity="0.32"/>
+      <feDropShadow class="card-glow" dx="0" dy="0" stdDeviation="6" flood-color="#4f8cff" flood-opacity="0.16"/>
     </filter>
     <linearGradient id="trophyGrad" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#171f30"/>

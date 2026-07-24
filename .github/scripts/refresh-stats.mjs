@@ -457,7 +457,7 @@ async function buildProjectCard(username, spec) {
     .accent { fill: #4f8cff; }
     .pill { fill: #141a26; stroke: #ffffff14; }
     .divider { stroke: #ffffff14; }
-    .card-glow { flood-color: #4f8cff; flood-opacity: 0.32; }
+    .card-glow { flood-color: #4f8cff; flood-opacity: 0.16; }
     @media (prefers-color-scheme: light) {
       text { fill: #1f2328; }
       .card-bg { fill: #ffffff; stroke: #d0d7de; }
@@ -467,11 +467,11 @@ async function buildProjectCard(username, spec) {
       .accent { fill: #0969da; }
       .pill { fill: #f6f8fa; stroke: #d0d7de; }
       .divider { stroke: #d0d7de; }
-      .card-glow { flood-color: #4f8cff; flood-opacity: 0.20; }
+      .card-glow { flood-color: #4f8cff; flood-opacity: 0.10; }
     }
   </style>
   <filter id="cardGlow" x="-25%" y="-25%" width="150%" height="150%">
-    <feDropShadow class="card-glow" dx="0" dy="0" stdDeviation="6" flood-color="#4f8cff" flood-opacity="0.32"/>
+    <feDropShadow class="card-glow" dx="0" dy="0" stdDeviation="6" flood-color="#4f8cff" flood-opacity="0.16"/>
   </filter>
   <clipPath id="imgClip"><path d="M0 14 a14 14 0 0 1 14 -14 h${CW - 28} a14 14 0 0 1 14 14 v${IMG_H - 14} h-${CW} z"/></clipPath>
 </defs>
