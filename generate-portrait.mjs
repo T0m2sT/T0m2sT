@@ -76,12 +76,11 @@ const RAMP = [
   "c", "C", "o", "X", "U", "O", "w", "m", "%", "&",
   "B", "#", "8", "@", "W", "W",
 ];
-// blue ramp with a lifted floor - the darkest tones are a clear dark-blue
-// rather than near-black, so the portrait's shadow areas stay visibly blue
-// instead of merging into the dark card
+// neutral grayscale ramp (dark -> white) - renders the portrait as a black &
+// white photo on the dark portrait card
 const PALETTE = [
-  "#1e4368", "#26527c", "#2f6290", "#3a72a4", "#4884ba",
-  "#5a97cd", "#74aede", "#93c4e8", "#b6d8f1", "#daedf9", "#f2f8fe",
+  "#0d0d0d", "#1f1f1f", "#333333", "#4d4d4d", "#666666",
+  "#808080", "#999999", "#b3b3b3", "#cccccc", "#e6e6e6", "#ffffff",
 ];
 
 function escXml(s) {
