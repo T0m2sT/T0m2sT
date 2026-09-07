@@ -7,6 +7,6 @@
      raw blob - the empty anchor suppresses that so clicking the banner does
      nothing instead of opening the SVG source. -->
 <p align="center">
-<a href="#"><img alt="T0m2sT — profile summary" src="./profile.svg" width="100%"></a>
+<a href="#"><img alt="T0m2sT - profile summary" src="./profile.svg" width="100%"></a>
 <a href="https://github.com/T0m2sT/The_Forge"><img alt="The Forge" src="./cards/the-forge.svg" width="49%"></a><a href="https://github.com/T0m2sT/Bob_The_Destructor"><img alt="Bob the Destructor" src="./cards/bob-the-destructor.svg" width="49%"></a>
 </p>
