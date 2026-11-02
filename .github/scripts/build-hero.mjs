@@ -1,34 +1,10 @@
 // Builds the animated hero and the two link pills (hero/*.svg).
 // Static content, run by hand: node .github/scripts/build-hero.mjs
-// Fonts are embedded as base64 so the SVGs render the same inside <img> on GitHub.
-// Fonts: Bricolage Grotesque + JetBrains Mono (SIL Open Font License), via @fontsource.
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync } from "node:fs";
+import { C, SANS, MONO, fontCss, cardGradient } from "./theme.mjs";
 
-const font = (file) => readFileSync(`.github/fonts/${file}`).toString("base64");
-const face = (family, weight, file) =>
-  `@font-face{font-family:'${family}';font-weight:${weight};src:url(data:font/woff2;base64,${font(file)}) format('woff2')}`;
-
-// each SVG embeds only the faces it uses, to keep the files small
-const HERO_FONTS = [
-  face("Bricolage", 800, "bricolage-grotesque-latin-800-normal.woff2"),
-  face("Bricolage", 500, "bricolage-grotesque-latin-500-normal.woff2"),
-  face("JBMono", 500, "jetbrains-mono-latin-500-normal.woff2"),
-].join("\n");
-const PILL_FONTS = face("JBMono", 700, "jetbrains-mono-latin-700-normal.woff2");
-
-// palette: dark + light blue, one radiant orange accent
-const C = {
-  ink: "#eaf3ff",      // headline, light blue-white
-  bio: "#a8c8f0",      // light blue body
-  mute: "#6f93c0",     // muted blue
-  navy: "#0a1630",     // dark blue
-  blue: "#12274d",     // lighter blue for the card gradient
-  line: "#9cc3ff22",   // hairline
-  accent: "#ff7a2e",   // radiant orange
-};
-
-const SANS = "'Bricolage', ui-sans-serif, -apple-system, 'Segoe UI', system-ui, sans-serif";
-const MONO = "'JBMono', ui-monospace, 'SF Mono', Consolas, monospace";
+const HERO_FONTS = fontCss("sans800", "sans500", "mono500");
+const PILL_FONTS = fontCss("mono700");
 
 // ---- hero ---------------------------------------------------------------
 // Motion (all on load, ends in the final state; ambient glow is the only loop):
@@ -59,10 +35,10 @@ ${HERO_FONTS}
 </style>
 <clipPath id="card"><rect x="20" y="20" width="960" height="230" rx="16"/></clipPath>
 <clipPath id="nameBox"><rect x="60" y="48" width="880" height="100"/></clipPath>
-<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${C.navy}"/><stop offset="100%" stop-color="${C.blue}"/></linearGradient>
+${cardGradient("bg")}
 <radialGradient id="g" cx="50%" cy="50%" r="50%">
-<stop offset="0%" stop-color="${C.accent}" stop-opacity=".30"/>
-<stop offset="100%" stop-color="${C.accent}" stop-opacity="0"/>
+<stop offset="0%" stop-color="${C.glow}" stop-opacity=".30"/>
+<stop offset="100%" stop-color="${C.glow}" stop-opacity="0"/>
 </radialGradient>
 </defs>
 <rect x="20.5" y="20.5" width="959" height="229" rx="16" class="card"/>
