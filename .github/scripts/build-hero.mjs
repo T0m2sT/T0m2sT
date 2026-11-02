@@ -16,6 +16,17 @@ const HERO_FONTS = [
 ].join("\n");
 const PILL_FONTS = face("JBMono", 700, "jetbrains-mono-latin-700-normal.woff2");
 
+// palette: dark + light blue, one radiant orange accent
+const C = {
+  ink: "#eaf3ff",      // headline, light blue-white
+  bio: "#a8c8f0",      // light blue body
+  mute: "#6f93c0",     // muted blue
+  navy: "#0a1630",     // dark blue
+  blue: "#12274d",     // lighter blue for the card gradient
+  line: "#9cc3ff22",   // hairline
+  accent: "#ff7a2e",   // radiant orange
+};
+
 const SANS = "'Bricolage', ui-sans-serif, -apple-system, 'Segoe UI', system-ui, sans-serif";
 const MONO = "'JBMono', ui-monospace, 'SF Mono', Consolas, monospace";
 
@@ -29,12 +40,12 @@ const hero = `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="270" 
 <defs>
 <style>
 ${HERO_FONTS}
-.name{font-family:${SANS};font-weight:800;font-size:78px;letter-spacing:-0.035em;fill:#eef2f9}
-.name .last{fill:#4f8cff}
-.bio{font-family:${SANS};font-weight:500;font-size:18px;fill:#aab3c5}
-.sub{font-family:${MONO};font-weight:500;font-size:13px;letter-spacing:.02em;fill:#6c7689}
-.card{fill:#10151d;stroke:#ffffff14}
-.rule{stroke:#4f8cff;stroke-width:4;stroke-linecap:round;fill:none;stroke-dasharray:120;stroke-dashoffset:0}
+.name{font-family:${SANS};font-weight:800;font-size:78px;letter-spacing:-0.035em;fill:${C.ink}}
+.name .last{fill:${C.accent}}
+.bio{font-family:${SANS};font-weight:500;font-size:18px;fill:${C.bio}}
+.sub{font-family:${MONO};font-weight:500;font-size:13px;letter-spacing:.02em;fill:${C.mute}}
+.card{fill:url(#bg);stroke:${C.line}}
+.rule{stroke:${C.accent};stroke-width:4;stroke-linecap:round;fill:none;stroke-dasharray:120;stroke-dashoffset:0}
 .rise{animation:rise 1s cubic-bezier(.16,1,.3,1) .15s both}
 .draw{animation:draw .9s cubic-bezier(.16,1,.3,1) .85s both}
 .fade1{animation:fade .9s cubic-bezier(.16,1,.3,1) 1.0s both}
@@ -48,9 +59,10 @@ ${HERO_FONTS}
 </style>
 <clipPath id="card"><rect x="20" y="20" width="960" height="230" rx="16"/></clipPath>
 <clipPath id="nameBox"><rect x="60" y="48" width="880" height="100"/></clipPath>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${C.navy}"/><stop offset="100%" stop-color="${C.blue}"/></linearGradient>
 <radialGradient id="g" cx="50%" cy="50%" r="50%">
-<stop offset="0%" stop-color="#4f8cff" stop-opacity=".30"/>
-<stop offset="100%" stop-color="#4f8cff" stop-opacity="0"/>
+<stop offset="0%" stop-color="${C.accent}" stop-opacity=".30"/>
+<stop offset="100%" stop-color="${C.accent}" stop-opacity="0"/>
 </radialGradient>
 </defs>
 <rect x="20.5" y="20.5" width="959" height="229" rx="16" class="card"/>
@@ -67,8 +79,8 @@ const pill = (label, w) => `<svg xmlns="http://www.w3.org/2000/svg" width="${w}"
 <title>${label}</title>
 <style>
 ${PILL_FONTS}
-.p{fill:#10151d;stroke:#4f8cff55}
-.t{font-family:${MONO};font-weight:700;font-size:13px;letter-spacing:.04em;fill:#4f8cff}
+.p{fill:${C.navy};stroke:${C.accent}66}
+.t{font-family:${MONO};font-weight:700;font-size:13px;letter-spacing:.04em;fill:${C.accent}}
 .in{animation:in .8s cubic-bezier(.16,1,.3,1) 1.5s both}
 @keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @media (prefers-reduced-motion:reduce){.in{animation:none}}
