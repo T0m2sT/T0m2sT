@@ -7,7 +7,7 @@
      un-anchored README image to its raw blob - wrapping it in a link to the
      profile suppresses that, so clicking the banner never opens the SVG source. -->
 <h1 align="center">Pedro Tomás Teixeira</h1>
-<p align="center">BSc in Informatics and Computer Engineering @FEUP | ACM Vice President &amp; Head of Cybersecurity Dep. | xSTF Member</p>
+<p align="center">FEUP Computer Engineering student, ACM FEUP Vice President, head of its cybersecurity department. I build Market Pulse, Trusty Shelf and more.</p>
 
 <p align="center">
 <a href="https://github.com/T0m2sT"><img alt="GitHub profile summary: contribution chart, total contributions, stats and tech stack" src="./profile.svg" width="100%"></a>
