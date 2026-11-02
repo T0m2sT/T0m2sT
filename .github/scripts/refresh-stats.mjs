@@ -711,8 +711,24 @@ ${endTag}`;
   {
     const forgeBanner = (await readFile("cards/assets/the-forge-banner.png")).toString("base64");
     const bobBanner = (await readFile("cards/assets/bob-the-destructor-banner.png")).toString("base64");
+    const mpBanner = (await readFile("cards/assets/market-pulse-banner.png")).toString("base64");
+    const tsBanner = (await readFile("cards/assets/trusty-shelf-banner.png")).toString("base64");
 
     const cardSpecs = [
+      {
+        repo: "Market_Pulse",
+        display: "Market Pulse",
+        desc: "A personal portfolio tracker - Trading212 holdings, AI weekly news briefings, an earnings calendar and dividends.",
+        banner: `<image href="data:image/png;base64,${mpBanner}" x="0" y="0" width="340" height="140" preserveAspectRatio="xMidYMid slice"/>`,
+        file: "cards/market-pulse.svg",
+      },
+      {
+        repo: "Trusty_Shelf",
+        display: "Trusty Shelf",
+        desc: "Ceiling cameras watch the produce shelves - checks the right product is there and whether it is empty, half or full.",
+        banner: `<image href="data:image/png;base64,${tsBanner}" x="0" y="0" width="340" height="140" preserveAspectRatio="xMidYMid slice"/>`,
+        file: "cards/trusty-shelf.svg",
+      },
       {
         repo: "The_Forge",
         display: "The Forge",
