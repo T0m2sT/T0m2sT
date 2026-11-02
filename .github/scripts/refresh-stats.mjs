@@ -718,7 +718,7 @@ ${endTag}`;
       {
         repo: "Market_Pulse",
         display: "Market Pulse",
-        desc: "A personal portfolio tracker - Trading212 holdings, AI weekly news briefings, an earnings calendar and dividends.",
+        desc: "A portfolio tracker - Trading212 holdings, AI weekly news briefings, an earnings calendar and dividends.",
         banner: `<image href="data:image/png;base64,${mpBanner}" x="0" y="0" width="340" height="140" preserveAspectRatio="xMidYMid slice"/>`,
         file: "cards/market-pulse.svg",
       },
