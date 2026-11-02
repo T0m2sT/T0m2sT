@@ -8,6 +8,7 @@
      profile suppresses that, so clicking the banner never opens the SVG source. -->
 <h1 align="center">Pedro Tomás Teixeira</h1>
 <p align="center">Student of LEIC@FEUP, ACM FEUP Vice President (Internal) &amp; Head of Cybersecurity Department. Some of my work pinned below.</p>
+<p align="center"><a href="https://www.linkedin.com/in/pedrotomasteixeira/">LinkedIn</a> | <a href="https://drive.google.com/file/d/1yY0Kwl3yaYo2QgKXT7AtNvGq_8rIR0Rx/view?usp=sharing">CV</a></p>
 
 <p align="center">
 <a href="https://github.com/T0m2sT"><img alt="GitHub profile summary: contribution chart, total contributions, stats and tech stack" src="./profile.svg" width="100%"></a>
