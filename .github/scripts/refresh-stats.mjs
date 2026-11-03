@@ -1,4 +1,5 @@
 import { readFile, writeFile } from "node:fs/promises";
+import { C, SANS, MONO, fontCss, cardGradient } from "./theme.mjs";
 
 const USERNAME = process.env.GH_STATS_USERNAME || "T0m2sT";
 const SVG_PATH = process.env.PROFILE_SVG_PATH || "profile.svg";
@@ -45,7 +46,7 @@ function buildRangeTabs(username) {
   const tabW = 46, gap = 6, tabH = 24;
   const tabs = ranges.map((r, i) => {
     const x = i * (tabW + gap);
-    const fill = r.active ? "#4f8cff" : "transparent";
+    const fill = r.active ? C.accent : "transparent";
     const textClass = r.active ? "tab-text-active" : "tab-text";
     return `<g class="tab-link">
         <rect class="tab-hit" x="${x}" y="0" width="${tabW}" height="${tabH}" rx="12" fill="${fill}"/>
@@ -280,7 +281,7 @@ async function buildCandlestickChart(username, chartWidth, chartHeight, weeks = 
         bodyTop -= (1.5 - bodyH) / 2;
         bodyH = 1.5;
       }
-      return `<line x1="${(x + cw / 2).toFixed(1)}" y1="${yHigh.toFixed(1)}" x2="${(x + cw / 2).toFixed(1)}" y2="${yLow.toFixed(1)}" stroke="${color}" stroke-width="1.5"/><rect x="${x.toFixed(1)}" y="${bodyTop.toFixed(1)}" width="${cw.toFixed(1)}" height="${bodyH.toFixed(1)}" rx="1" fill="${color}"/>`;
+      return `<g class="candle" style="animation-delay:${(0.3 + i * 0.035).toFixed(2)}s"><line x1="${(x + cw / 2).toFixed(1)}" y1="${yHigh.toFixed(1)}" x2="${(x + cw / 2).toFixed(1)}" y2="${yLow.toFixed(1)}" stroke="${color}" stroke-width="1.5"/><rect x="${x.toFixed(1)}" y="${bodyTop.toFixed(1)}" width="${cw.toFixed(1)}" height="${bodyH.toFixed(1)}" rx="1" fill="${color}"/></g>`;
     })
     .join("\n");
 
@@ -413,28 +414,28 @@ async function buildProjectCard(username, spec) {
   }
 
   const CW = 340, PAD = 18, IMG_H = 140;
-  const descLines = wrapText(spec.desc, CW - 2 * PAD, 11.5, 3);
+  const descLines = wrapText(spec.desc, CW - 2 * PAD - 10, 11.5, 3);
   const descBlockH = 3 * 17; // reserve fixed space for 3 lines regardless of actual wrap
   let y = IMG_H + 26;
-  let body = `<g clip-path="url(#imgClip)">${spec.banner}</g>`;
-  body += `<text x="${PAD}" y="${y}" class="title" style="font-family:ui-sans-serif,-apple-system,'Segoe UI',system-ui,sans-serif;font-size:16px;font-weight:800">${escXml(spec.display)}</text>`;
+  let body = `<g clip-path="url(#imgClip)"><g class="drift">${spec.banner}</g></g>`;
+  body += `<text x="${PAD}" y="${y}" class="title">${escXml(spec.display)}</text>`;
   y += 24;
   const descTop = y;
   for (const l of descLines) {
-    body += `<text x="${PAD}" y="${y}" class="desc" style="font-family:ui-sans-serif,-apple-system,'Segoe UI',system-ui,sans-serif;font-size:11.5px">${escXml(l)}</text>`;
+    body += `<text x="${PAD}" y="${y}" class="desc">${escXml(l)}</text>`;
     y += 17;
   }
   y = descTop + descBlockH + 10;
   let tx = PAD;
   for (const tag of tags) {
     const w = tag.length * 7 + 20;
-    body += `<rect x="${tx}" y="${y - 13}" width="${w}" height="22" rx="11" class="pill"/><text x="${tx + w / 2}" y="${y + 2}" text-anchor="middle" class="accent" style="font-size:10px;font-weight:700">${escXml(tag)}</text>`;
+    body += `<rect x="${tx}" y="${y - 13}" width="${w}" height="22" rx="11" class="pill"/><text x="${tx + w / 2}" y="${y + 2}" text-anchor="middle" class="accent" style="font-size:10px;font-weight:500">${escXml(tag)}</text>`;
     tx += w + 7;
   }
   y += 30;
   body += `<line x1="${PAD}" y1="${y}" x2="${CW - PAD}" y2="${y}" class="divider"/>`;
   y += 24;
-  body += `<text x="${PAD}" y="${y}" class="accent" style="font-family:ui-sans-serif,-apple-system,'Segoe UI',system-ui,sans-serif;font-size:11.5px;font-weight:700">View project →</text>`;
+  body += `<text x="${PAD}" y="${y}" class="cta">View project →</text>`;
   y += 18;
   const commitsStr = totalCommits != null ? `${totalCommits} commits` : "— commits";
   const locStr = additions >= 1000 ? `${(additions / 1000).toFixed(1)}K` : String(additions);
@@ -449,35 +450,35 @@ async function buildProjectCard(username, spec) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${escXml(spec.display)}">
 <defs>
   <style>
-    text { font-family: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Consolas, monospace; fill: #e7ebf3; }
-    .card-bg { fill: #10151d; stroke: none; }
-    .title { fill: #e7ebf3; }
-    .desc { fill: #c9d1d9; }
-    .muted { fill: #6c7689; }
-    .accent { fill: #4f8cff; }
-    .pill { fill: #141a26; stroke: #ffffff14; }
-    .divider { stroke: #ffffff14; }
-    .card-glow { flood-color: #4f8cff; flood-opacity: 0.16; }
-    @media (prefers-color-scheme: light) {
-      text { fill: #1f2328; }
-      .card-bg { fill: #ffffff; stroke: #d0d7de; }
-      .title { fill: #1f2328; }
-      .desc { fill: #59636e; }
-      .muted { fill: #59636e; }
-      .accent { fill: #0969da; }
-      .pill { fill: #f6f8fa; stroke: #d0d7de; }
-      .divider { stroke: #d0d7de; }
-      .card-glow { flood-color: #4f8cff; flood-opacity: 0.16; }
-    }
+${fontCss("sans800", "sans500", "mono500")}
+    text{font-family:${MONO};fill:${C.ink}}
+    .card-bg{fill:url(#cardBg);stroke:${C.line}}
+    .title{font-family:${SANS};font-weight:800;font-size:17px;letter-spacing:-.01em;fill:${C.ink}}
+    .desc{font-family:${SANS};font-weight:500;font-size:11.5px;fill:${C.bio}}
+    .muted{fill:${C.mute}}
+    .accent{fill:${C.accent}}
+    .cta{font-family:${SANS};font-weight:800;font-size:12px;fill:${C.accent}}
+    .pill{fill:${C.navy};stroke:${C.accent}55}
+    .divider{stroke:${C.line}}
+    .card-glow{flood-color:${C.glow};flood-opacity:.16}
+    .drift{transform-box:fill-box;transform-origin:50% 50%;animation:drift 14s ease-in-out infinite alternate}
+    .sheen{animation:sheen 9s ease-in-out infinite}
+    @keyframes drift{from{transform:scale(1)}to{transform:scale(1.06)}}
+    @keyframes sheen{0%,62%{transform:translateX(-150px)}100%{transform:translateX(490px)}}
+    @media (prefers-reduced-motion:reduce){.drift{animation:none}.sheen{display:none}}
   </style>
+  ${cardGradient("cardBg")}
+  <linearGradient id="sheenGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${C.glow}" stop-opacity="0"/><stop offset="50%" stop-color="#cfe3ff" stop-opacity=".10"/><stop offset="100%" stop-color="${C.glow}" stop-opacity="0"/></linearGradient>
+  <clipPath id="cardClip"><rect x="0.5" y="0.5" width="${CW - 1}" height="${h - 1}" rx="14"/></clipPath>
   <filter id="cardGlow" x="-25%" y="-25%" width="150%" height="150%">
-    <feDropShadow class="card-glow" dx="0" dy="0" stdDeviation="6" flood-color="#4f8cff" flood-opacity="0.16"/>
+    <feDropShadow class="card-glow" dx="0" dy="0" stdDeviation="6" flood-color="${C.glow}" flood-opacity="0.16"/>
   </filter>
   <clipPath id="imgClip"><path d="M0 14 a14 14 0 0 1 14 -14 h${CW - 28} a14 14 0 0 1 14 14 v${IMG_H - 14} h-${CW} z"/></clipPath>
 </defs>
 <g transform="translate(${GP}, ${GP})">
 <rect x="0.5" y="0.5" width="${CW - 1}" height="${h - 1}" rx="14" class="card-bg" filter="url(#cardGlow)"/>
 ${body}
+<g clip-path="url(#cardClip)"><polygon class="sheen" points="40,0 190,0 150,${h} 0,${h}" fill="url(#sheenGrad)"/></g>
 </g>
 </svg>`;
 }
@@ -546,14 +547,14 @@ async function buildActivityChart(username, width, height, days = 90) {
   return `<svg x="0" y="0" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
   <defs>
     <linearGradient id="activityFill" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#4f8cff" stop-opacity="0.35"/>
-      <stop offset="100%" stop-color="#4f8cff" stop-opacity="0"/>
+      <stop offset="0%" stop-color="${C.accent}" stop-opacity="0.32"/>
+      <stop offset="100%" stop-color="${C.accent}" stop-opacity="0"/>
     </linearGradient>
   </defs>
-  <polygon points="${points.join(" ")} ${width},${height} 0,${height}" fill="url(#activityFill)"/>
-  <polyline points="${points.join(" ")}" fill="none" stroke="#4f8cff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="${last[0]}" cy="${last[1]}" r="4" fill="#4f8cff"/>
-  <circle cx="${last[0]}" cy="${last[1]}" r="8" fill="#4f8cff" opacity="0.25"/>
+  <polygon class="areafade" points="${points.join(" ")} ${width},${height} 0,${height}" fill="url(#activityFill)"/>
+  <polyline class="draw" pathLength="1" points="${points.join(" ")}" fill="none" stroke="${C.accent}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle class="pop" cx="${last[0]}" cy="${last[1]}" r="4" fill="${C.accent}"/>
+  <circle class="pop" cx="${last[0]}" cy="${last[1]}" r="8" fill="${C.accent}" opacity="0.25"/>
 </svg>`;
 }
 
@@ -594,9 +595,51 @@ async function fetchFirstOk(urls) {
   return null;
 }
 
+// the style block inside profile.svg is generated from theme.mjs so the
+// palette and fonts live in one place
+function profileCss() {
+  return `<style>
+${fontCss("sans800", "mono500", "mono700")}
+text{font-family:${MONO};fill:${C.ink}}
+.sym{font-family:${SANS};font-size:28px;font-weight:800;letter-spacing:-.02em;fill:${C.ink}}
+.sub{font-size:12px;letter-spacing:.04em;fill:${C.mute};text-transform:uppercase}
+.lbl{font-size:12px;font-weight:700;letter-spacing:.08em;fill:${C.accent};text-transform:uppercase}
+.tab-text{font-size:12.5px;font-weight:500;fill:${C.mute}}
+.tab-text-active{font-size:12.5px;font-weight:700;fill:${C.navy}}
+.card{fill:url(#cardBg);stroke:${C.line}}
+.row-stripe{fill:#9cc3ff0d}
+.muted{fill:${C.mute}}
+.stat-key{fill:${C.bio}}
+.accent{fill:${C.accent}}
+.big-num{fill:${C.ink}}
+.card-glow{flood-color:${C.glow};flood-opacity:.16}
+.scan{animation:scan 7s linear infinite}
+.candle{transform-box:fill-box;transform-origin:50% 100%;animation:grow .7s cubic-bezier(.16,1,.3,1) both}
+.draw{stroke-dasharray:1;stroke-dashoffset:0;animation:draw 1.4s cubic-bezier(.16,1,.3,1) .2s both}
+.areafade{animation:fadein 1.4s ease .5s both}
+.pop{animation:fadein .6s ease 1.4s both}
+@keyframes scan{from{transform:translateY(-70px)}to{transform:translateY(600px)}}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.scan{display:none}.candle,.draw,.areafade,.pop{animation:none}}
+</style>`;
+}
+
 async function main() {
   let svg = await readFile(SVG_PATH, "utf8");
   let changed = false;
+
+  {
+    const beginTag = `<!-- THEME:BEGIN -->`;
+    const endTag = `<!-- THEME:END -->`;
+    const beginIdx = svg.indexOf(beginTag);
+    const endIdx = svg.indexOf(endTag);
+    if (beginIdx !== -1 && endIdx !== -1) {
+      svg = svg.slice(0, beginIdx) + `${beginTag}\n${profileCss()}\n` + svg.slice(endIdx);
+      changed = true;
+    }
+  }
 
   {
     const beginTag = `<!-- GH-TABS:BEGIN -->`;
@@ -694,7 +737,7 @@ ${endTag}`;
         const replacement = `${beginTag}
 <g transform="translate(580, 28)">
 <text text-anchor="end" y="0" class="muted" style="font-size:11.5px;letter-spacing:.05em">ALL-TIME</text>
-<text text-anchor="end" y="30" class="big-num" style="font-size:30px;font-weight:800;font-family:ui-monospace,monospace">${quote.total}</text>
+<text text-anchor="end" y="30" class="big-num" style="font-size:30px;font-weight:700">${quote.total}</text>
 <text text-anchor="end" y="51" class="accent" style="font-size:12.5px;font-weight:700">${quote.longest}d best streak</text>
 </g>
 <g transform="translate(20, 80)">

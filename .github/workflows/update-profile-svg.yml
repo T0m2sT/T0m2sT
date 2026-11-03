@@ -23,10 +23,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node .github/scripts/refresh-stats.mjs
 
+      - name: Rebuild the lower terminal section
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node .github/scripts/build-lower.mjs
+
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add profile.svg cards/*.svg
+          git add profile.svg cards/*.svg lower/*.svg
           git diff --cached --quiet || git commit -m "chore: refresh profile.svg stats cards"
           git push
