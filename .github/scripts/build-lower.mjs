@@ -93,10 +93,12 @@ text{font-family:${MONO};fill:${C.ink}}
 @keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes drift{from{transform:scale(1)}to{transform:scale(1.06)}}
 .sheen{animation:sheen 9s ease-in-out infinite}
+.fsheen{animation:fsheen 9s ease-in-out infinite}
 @keyframes sheen{0%,62%{transform:translateX(-320px)}100%{transform:translateX(1100px)}}
+@keyframes fsheen{0%,62%{transform:translateX(-200px)}100%{transform:translateX(430px)}}
 @keyframes tl{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
 @keyframes blink{50%{opacity:0}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important}.sheen{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.sheen,.fsheen{display:none}}
 `;
 mkdirSync("lower", { recursive: true });
 // one slice = the full canvas cropped to [y, y+h) by viewBox
@@ -122,10 +124,6 @@ const E0 = T + 114, EEND = E0 + projects.length * RH, SY = EEND + 20;
 const H = SY + 24 + 2 * 34 + 70;
 const termCard = `<path d="${rr(20, T, 960, H - T - 20, 16)}" class="card" filter="url(#glow)"/>`;
 
-// sheen: a slanted bright band sweeping across the card, clipped to it; position depends only on time,
-// so every slice shows the same band at the same moment
-const TB = H - 20, SL = Math.round((TB - T) * 0.12);
-const termSheen = `<clipPath id="tcc"><path d="${rr(20, T, 960, TB - T, 16)}"/></clipPath><g clip-path="url(#tcc)"><polygon class="sheen" points="${SL},${T} ${SL + 170},${T} 170,${TB} 0,${TB}" fill="url(#sheenGrad)"/></g>`;
 // ticker: three copies, slide exactly one copy (mono advance .6em + .04em spacing) so the loop never jumps
 const SEP = "      ·      ";
 const run = stats.map(([k, v]) => `${k.toUpperCase()}  ${v}${k === "Lines" ? `  (+${add} / -${del})` : ""}`).join(SEP) + SEP;
@@ -137,7 +135,7 @@ slice("ticker", 10, 86, `.tick{animation:tick 26s linear infinite}@keyframes tic
 
 const dots = [44, 60, 76].map((x) => `<circle cx="${x}" cy="${T + 21}" r="4.5" fill="${C.mute}" opacity=".5"/>`).join("");
 slice("term-top", T, E0 - T, "",
-  `${termCard}<line x1="20" y1="${T + 42}" x2="980" y2="${T + 42}" class="hair"/>${dots}<text x="100" y="${T + 25}" class="m" style="font-size:12px">t0m2st@feup ~ portfolio</text><text x="44" y="${T + 84}" style="font-size:13.5px"><tspan class="a b">$</tspan> <tspan>ls -l projects/</tspan></text>${termSheen}`,
+  `${termCard}<line x1="20" y1="${T + 42}" x2="980" y2="${T + 42}" class="hair"/>${dots}<text x="100" y="${T + 25}" class="m" style="font-size:12px">t0m2st@feup ~ portfolio</text><text x="44" y="${T + 84}" style="font-size:13.5px"><tspan class="a b">$</tspan> <tspan>ls -l projects/</tspan></text>`,
   "Terminal window: ls -l projects/", ["mono500", "mono700"]);
 
 projects.forEach((p, i) => {
@@ -152,15 +150,16 @@ projects.forEach((p, i) => {
   [14, 27, 40].forEach((dx) => (b += `<circle cx="${FX + dx}" cy="${y + 13}" r="3.5" fill="${C.mute}" opacity=".5"/>`));
   b += `<text x="${FX + 58}" y="${y + 17}" class="m" style="font-size:9.5px">github.com/${OWNER}/${p.repo}</text>`;
   b += bannerImg(p, `M${FX} ${y + FH - 10} V${y + BAR} H${FX + FW} V${y + FH - 10} A10 10 0 0 1 ${FX + FW - 10} ${y + FH} H${FX + 10} A10 10 0 0 1 ${FX} ${y + FH - 10} Z`, FX, y + BAR, FW, FH - BAR);
+  b += `<clipPath id="fc"><path d="${rr(FX, y, FW, FH, 10)}"/></clipPath><g clip-path="url(#fc)"><polygon class="fsheen" points="${FX + 40},${y} ${FX + 190},${y} ${FX + 150},${y + FH} ${FX},${y + FH}" fill="url(#sheenGrad)"/></g>`;
   const tx = FX + FW + 32;
   b += `<text x="${tx}" y="${y + 36}" class="t" style="font-size:30px">${esc(p.title)}</text>`;
   wrap(p.desc, 430, 12.5, 0.6).forEach((l, j) => (b += `<text x="${tx}" y="${y + 62 + j * 19}" style="font-size:12px;fill:${C.bio}"><tspan class="m">#</tspan> ${esc(l)}</text>`));
   b += pills(tx, y + 120, p.tags) + langBar(tx, y + 154, 220, p);
   b += `<text x="${tx}" y="${y + 180}" class="m" style="font-size:10.5px">${esc(meta(p))}</text><text x="${tx}" y="${y + 198}" class="cta" style="font-size:12.5px">View project →</text></g>`;
-  slice(`entry-${p.slug}`, y, RH, "", b + termSheen, `${p.title}: ${p.desc} ${p.tags.join(", ")}. ${meta(p)}.`);
+  slice(`entry-${p.slug}`, y, RH, "", b, `${p.title}: ${p.desc} ${p.tags.join(", ")}. ${meta(p)}.`);
 });
 
 let sb2 = termCard + `<text x="44" y="${SY}" style="font-size:13.5px"><tspan class="a b">$</tspan> <tspan>cat stack.txt</tspan></text>`;
 tech.forEach((t, i) => { const cx = 44 + (i % 4) * 225, cy = SY + 36 + Math.floor(i / 4) * 34; sb2 += `<g ${IN(0.2 + i * 0.05)}>${icon(t, cx, cy - 12, 1)}<text x="${cx + 32}" y="${cy + 5}" style="font-size:13px">${t.name}</text></g>`; });
 sb2 += `<text x="44" y="${SY + 36 + 2 * 34 + 14}" style="font-size:13.5px"><tspan class="a b">$</tspan> <tspan class="cursor">▋</tspan></text>`;
-slice("term-stack", EEND, H - EEND, "", sb2 + termSheen, `Tech stack: ${TECH_NAMES.join(", ")}`, ["mono500", "mono700"]);
+slice("term-stack", EEND, H - EEND, "", sb2, `Tech stack: ${TECH_NAMES.join(", ")}`, ["mono500", "mono700"]);
