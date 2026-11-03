@@ -137,27 +137,33 @@ slice("term-top", T, E0 - T, "",
   `${termCard}<line x1="20" y1="${T + 42}" x2="980" y2="${T + 42}" class="hair"/>${dots}<text x="100" y="${T + 25}" class="m" style="font-size:12px">t0m2st@feup ~ portfolio</text><text x="44" y="${T + 84}" style="font-size:13.5px"><tspan class="a b">$</tspan> <tspan>ls -l projects/</tspan></text>`,
   "Terminal window: ls -l projects/", ["mono500", "mono700"]);
 
-projects.forEach((p, i) => {
-  const y = E0 + i * RH, ny = y + FH / 2, first = i === 0, last = i === projects.length - 1;
-  const d0 = 0.15 + i * 0.1;
-  let b = termCard;
-  b += `<line x1="${X}" y1="${first ? ny : y}" x2="${X}" y2="${last ? ny : y + RH}" stroke="${C.accent}" stroke-width="2" pathLength="1" stroke-dasharray="1" class="tl" style="animation-delay:${(d0).toFixed(2)}s"/>`;
-  b += `<g ${IN(d0)}>`;
-  b += `<text x="${X - 14}" y="${ny + 4}" text-anchor="end" class="m" style="font-size:10px">${esc(p.updated)}</text>`;
-  b += `<circle cx="${X}" cy="${ny}" r="7" fill="${C.navy}" stroke="${C.accent}" stroke-width="2"/><circle cx="${X}" cy="${ny}" r="2.5" fill="${C.accent}"/>`;
-  b += `<rect x="${FX + .5}" y="${y + .5}" width="${FW - 1}" height="${FH - 1}" rx="10" fill="${C.navy}" stroke="${FRAME}"/><line x1="${FX}" y1="${y + BAR}" x2="${FX + FW}" y2="${y + BAR}" class="hair"/>`;
+// entry building blocks: browser frame, timeline segment, node + date, description lines
+let fid = 0;
+const fr = (p, FX, y, FW, FH) => {
+  const id = "f" + fid++;
+  let b = `<rect x="${FX + .5}" y="${y + .5}" width="${FW - 1}" height="${FH - 1}" rx="10" fill="${C.navy}" stroke="${FRAME}"/><line x1="${FX}" y1="${y + BAR}" x2="${FX + FW}" y2="${y + BAR}" class="hair"/>`;
   [14, 27, 40].forEach((dx) => (b += `<circle cx="${FX + dx}" cy="${y + 13}" r="3.5" fill="${C.mute}" opacity=".5"/>`));
   b += `<text x="${FX + 58}" y="${y + 17}" class="m" style="font-size:9.5px">github.com/${OWNER}/${p.repo}</text>`;
   b += bannerImg(p, `M${FX} ${y + FH - 10} V${y + BAR} H${FX + FW} V${y + FH - 10} A10 10 0 0 1 ${FX + FW - 10} ${y + FH} H${FX + 10} A10 10 0 0 1 ${FX} ${y + FH - 10} Z`, FX, y + BAR, FW, FH - BAR);
-  b += `<rect x="${FX + .5}" y="${y + .5}" width="${FW - 1}" height="${FH - 1}" rx="10" fill="none" stroke="${FRAME}"/>`; // border over the screenshot too
-  b += `<clipPath id="fc"><path d="${rr(FX, y, FW, FH, 10)}"/></clipPath><g clip-path="url(#fc)"><polygon class="fsheen" points="${FX + 40},${y} ${FX + 190},${y} ${FX + 150},${y + FH} ${FX},${y + FH}" fill="url(#sheenGrad)"/></g>`;
-  const tx = FX + FW + 32;
-  b += `<text x="${tx}" y="${y + 36}" class="t" style="font-size:30px">${esc(p.title)}</text>`;
-  wrap(p.desc, 400, 12.5, 0.6).forEach((l, j) => (b += `<text x="${tx}" y="${y + 62 + j * 19}" style="font-size:12px;fill:${C.bio}"><tspan class="m">#</tspan> ${esc(l)}</text>`));
-  b += pills(tx, y + 120, p.tags) + langBar(tx, y + 154, 220, p);
-  b += `<text x="${tx}" y="${y + 180}" class="m" style="font-size:10.5px">${esc(meta(p))}</text><text x="${tx}" y="${y + 198}" class="cta" style="font-size:12.5px">View project →</text></g>`;
-  slice(`entry-${p.slug}`, y, RH, "", b, `${p.title}: ${p.desc} ${p.tags.join(", ")}. ${meta(p)}.`);
+  b += `<rect x="${FX + .5}" y="${y + .5}" width="${FW - 1}" height="${FH - 1}" rx="10" fill="none" stroke="${FRAME}"/>`;
+  b += `<clipPath id="${id}"><path d="${rr(FX, y, FW, FH, 10)}"/></clipPath><g clip-path="url(#${id})"><polygon class="fsheen" points="${FX + 40},${y} ${FX + 190},${y} ${FX + 150},${y + FH} ${FX},${y + FH}" fill="url(#sheenGrad)"/></g>`;
+  return b;
+};
+const tl = (i, y, ny, first, last, RH) => `<line x1="${X}" y1="${first ? ny : y}" x2="${X}" y2="${last ? ny : y + RH}" stroke="${C.accent}" stroke-width="2" pathLength="1" stroke-dasharray="1" class="tl" style="animation-delay:${(0.15 + i * 0.1).toFixed(2)}s"/>`;
+const nd = (p, ny) => `<text x="${X - 14}" y="${ny + 4}" text-anchor="end" class="m" style="font-size:10px">${esc(p.updated)}</text><circle cx="${X}" cy="${ny}" r="7" fill="${C.navy}" stroke="${C.accent}" stroke-width="2"/><circle cx="${X}" cy="${ny}" r="2.5" fill="${C.accent}"/>`;
+const lbl = (p) => `${p.title}: ${p.desc} ${p.tags.join(", ")}. ${meta(p)}.`;
+const desc = (b, p, x, y, w, fs, lh) => wrap(p.desc, w, fs, 0.6).forEach((l, j) => (b.s += `<text x="${x}" y="${y + j * lh}" style="font-size:${fs - .5}px;fill:${C.bio}"><tspan class="m">#</tspan> ${esc(l)}</text>`));
+projects.forEach((p, i) => {
+  const FX = 122, FW = 400, FH = BAR + Math.round(FW / (1436 / 591)), y = E0 + i * RH, ny = y + FH / 2, first = i === 0, last = i === projects.length - 1, tx = FX + FW + 30;
+  const b = { s: termCard + `<defs><linearGradient id="sc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C.navy}" stop-opacity="0"/><stop offset="1" stop-color="${C.navy}" stop-opacity=".94"/></linearGradient></defs>` + tl(i, y, ny, first, last, RH) + `<g ${IN(0.15 + i * 0.1)}>` + nd(p, ny) + fr(p, FX, y, FW, FH) };
+  b.s += `<clipPath id="sk"><path d="${rr(FX, y, FW, FH, 10)}"/></clipPath><g clip-path="url(#sk)"><rect x="${FX}" y="${y + FH - 96}" width="${FW}" height="96" fill="url(#sc)"/></g>`;
+  b.s += `<text x="${FX + 16}" y="${y + FH - 44}" class="t" style="font-size:26px">${esc(p.title)}</text>` + pills(FX + 16, y + FH - 34, p.tags).replace(/class="pill"/g, 'class="pill" fill-opacity=".85"');
+  desc(b, p, tx, y + 36, 410, 12.5, 19);
+  b.s += langBar(tx, y + 120, 260, p);
+  b.s += `<text x="${tx}" y="${y + 150}" class="m" style="font-size:10.5px">${esc(meta(p))}</text><text x="${tx}" y="${y + 174}" class="cta" style="font-size:12.5px">View project →</text></g>`;
+  slice(`entry-${p.slug}`, y, RH, "", b.s, lbl(p));
 });
+
 
 let sb2 = termCard + `<text x="44" y="${SY}" style="font-size:13.5px"><tspan class="a b">$</tspan> <tspan>cat stack.txt</tspan></text>`;
 tech.forEach((t, i) => { const cx = 44 + (i % 4) * 225, cy = SY + 36 + Math.floor(i / 4) * 34; sb2 += `<g ${IN(0.2 + i * 0.05)}>${icon(t, cx, cy - 12, 1)}<text x="${cx + 32}" y="${cy + 5}" style="font-size:13px">${t.name}</text></g>`; });
