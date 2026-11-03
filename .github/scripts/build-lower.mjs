@@ -74,7 +74,7 @@ const langBar = (x, y, w, p) => {
   return out + "</g>";
 };
 let uid = 0;
-const bannerImg = (p, d, x, y, w, h) => { const id = `c${uid++}`; return `<clipPath id="${id}"><path d="${d}"/></clipPath><g clip-path="url(#${id})"><g class="drift"><image href="${p.banner}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice"/></g></g>`; };
+const bannerImg = (p, d, x, y, w, h) => { const id = `c${uid++}`; return `<clipPath id="${id}"><path d="${d}"/></clipPath><g clip-path="url(#${id})"><image href="${p.banner}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice"/></g>`; };
 const IN = (d) => `class="in" style="animation-delay:${d.toFixed(2)}s"`;
 const meta = (p) => `${p.commits} · ${p.loc} · updated ${p.updated}`;
 
@@ -87,11 +87,9 @@ text{font-family:${MONO};fill:${C.ink}}
 .pill{fill:${C.navy};stroke:${C.accent}55}
 .hair{stroke:${C.line};fill:none}
 .in{animation:in .9s cubic-bezier(.16,1,.3,1) both}
-.drift{transform-box:fill-box;transform-origin:50% 50%;animation:drift 14s ease-in-out infinite alternate}
 .tl{animation:tl .5s ease-out both}
 .cursor{fill:${C.accent};animation:blink 1.1s steps(1) infinite}
 @keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes drift{from{transform:scale(1)}to{transform:scale(1.06)}}
 .sheen{animation:sheen 9s ease-in-out infinite}
 .fsheen{animation:fsheen 9s ease-in-out infinite}
 @keyframes sheen{0%,62%{transform:translateX(-320px)}100%{transform:translateX(1100px)}}
