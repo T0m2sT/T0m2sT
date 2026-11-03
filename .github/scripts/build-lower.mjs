@@ -74,7 +74,7 @@ const langBar = (x, y, w, p) => {
   return out + "</g>";
 };
 let uid = 0;
-const bannerImg = (p, d, x, y, w, h) => { const id = `c${uid++}`; return `<clipPath id="${id}"><path d="${d}"/></clipPath><g clip-path="url(#${id})"><g class="drift"><image href="${p.banner}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice"/></g></g>`; };
+const bannerImg = (p, d, x, y, w, h) => { const id = `c${uid++}`; return `<clipPath id="${id}"><path d="${d}"/></clipPath><g clip-path="url(#${id})"><image href="${p.banner}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice"/></g>`; };
 const IN = (d) => `class="in" style="animation-delay:${d.toFixed(2)}s"`;
 const meta = (p) => `${p.commits} · ${p.loc} · updated ${p.updated}`;
 
@@ -87,11 +87,9 @@ text{font-family:${MONO};fill:${C.ink}}
 .pill{fill:${C.navy};stroke:${C.accent}55}
 .hair{stroke:${C.line};fill:none}
 .in{animation:in .9s cubic-bezier(.16,1,.3,1) both}
-.drift{transform-box:fill-box;transform-origin:50% 50%;animation:drift 14s ease-in-out infinite alternate}
 .tl{animation:tl .5s ease-out both}
 .cursor{fill:${C.accent};animation:blink 1.1s steps(1) infinite}
 @keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes drift{from{transform:scale(1)}to{transform:scale(1.06)}}
 .sheen{animation:sheen 9s ease-in-out infinite}
 .fsheen{animation:fsheen 9s ease-in-out infinite}
 @keyframes sheen{0%,62%{transform:translateX(-320px)}100%{transform:translateX(1100px)}}
@@ -120,7 +118,7 @@ ${body}
 
 // ---- layout (absolute canvas coordinates, shared by all slices) ---------------
 const FRAME = "#1d2d4c"; // C.line blended on navy: an opaque twin so the border looks identical over the screenshot
-const T = 96, X = 90, RH = 220, FX = 122, FW = 364, FH = 196, BAR = 26;
+const T = 96, X = 90, RH = 220, FX = 122, FW = 400, FH = 191, BAR = 26; // image area 400x165 = 2.43:1, the banners' ratio, so screenshots show whole
 const E0 = T + 114, EEND = E0 + projects.length * RH, SY = EEND + 20;
 const H = SY + 24 + 2 * 34 + 70;
 const termCard = `<path d="${rr(20, T, 960, H - T - 20, 16)}" class="card" filter="url(#glow)"/>`;
@@ -155,7 +153,7 @@ projects.forEach((p, i) => {
   b += `<clipPath id="fc"><path d="${rr(FX, y, FW, FH, 10)}"/></clipPath><g clip-path="url(#fc)"><polygon class="fsheen" points="${FX + 40},${y} ${FX + 190},${y} ${FX + 150},${y + FH} ${FX},${y + FH}" fill="url(#sheenGrad)"/></g>`;
   const tx = FX + FW + 32;
   b += `<text x="${tx}" y="${y + 36}" class="t" style="font-size:30px">${esc(p.title)}</text>`;
-  wrap(p.desc, 430, 12.5, 0.6).forEach((l, j) => (b += `<text x="${tx}" y="${y + 62 + j * 19}" style="font-size:12px;fill:${C.bio}"><tspan class="m">#</tspan> ${esc(l)}</text>`));
+  wrap(p.desc, 400, 12.5, 0.6).forEach((l, j) => (b += `<text x="${tx}" y="${y + 62 + j * 19}" style="font-size:12px;fill:${C.bio}"><tspan class="m">#</tspan> ${esc(l)}</text>`));
   b += pills(tx, y + 120, p.tags) + langBar(tx, y + 154, 220, p);
   b += `<text x="${tx}" y="${y + 180}" class="m" style="font-size:10.5px">${esc(meta(p))}</text><text x="${tx}" y="${y + 198}" class="cta" style="font-size:12.5px">View project →</text></g>`;
   slice(`entry-${p.slug}`, y, RH, "", b, `${p.title}: ${p.desc} ${p.tags.join(", ")}. ${meta(p)}.`);
