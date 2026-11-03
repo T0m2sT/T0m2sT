@@ -120,7 +120,7 @@ ${body}
 
 // ---- layout (absolute canvas coordinates, shared by all slices) ---------------
 const FRAME = "#1d2d4c"; // C.line blended on navy: an opaque twin so the border looks identical over the screenshot
-const T = 96, X = 90, RH = 220, FX = 122, FW = 364, FH = 196, BAR = 26;
+const T = 96, X = 90, RH = 220, FX = 122, FW = 400, FH = 191, BAR = 26; // image area 400x165 = 2.43:1, the banners' ratio, so screenshots show whole
 const E0 = T + 114, EEND = E0 + projects.length * RH, SY = EEND + 20;
 const H = SY + 24 + 2 * 34 + 70;
 const termCard = `<path d="${rr(20, T, 960, H - T - 20, 16)}" class="card" filter="url(#glow)"/>`;
@@ -155,7 +155,7 @@ projects.forEach((p, i) => {
   b += `<clipPath id="fc"><path d="${rr(FX, y, FW, FH, 10)}"/></clipPath><g clip-path="url(#fc)"><polygon class="fsheen" points="${FX + 40},${y} ${FX + 190},${y} ${FX + 150},${y + FH} ${FX},${y + FH}" fill="url(#sheenGrad)"/></g>`;
   const tx = FX + FW + 32;
   b += `<text x="${tx}" y="${y + 36}" class="t" style="font-size:30px">${esc(p.title)}</text>`;
-  wrap(p.desc, 430, 12.5, 0.6).forEach((l, j) => (b += `<text x="${tx}" y="${y + 62 + j * 19}" style="font-size:12px;fill:${C.bio}"><tspan class="m">#</tspan> ${esc(l)}</text>`));
+  wrap(p.desc, 400, 12.5, 0.6).forEach((l, j) => (b += `<text x="${tx}" y="${y + 62 + j * 19}" style="font-size:12px;fill:${C.bio}"><tspan class="m">#</tspan> ${esc(l)}</text>`));
   b += pills(tx, y + 120, p.tags) + langBar(tx, y + 154, 220, p);
   b += `<text x="${tx}" y="${y + 180}" class="m" style="font-size:10.5px">${esc(meta(p))}</text><text x="${tx}" y="${y + 198}" class="cta" style="font-size:12.5px">View project →</text></g>`;
   slice(`entry-${p.slug}`, y, RH, "", b, `${p.title}: ${p.desc} ${p.tags.join(", ")}. ${meta(p)}.`);

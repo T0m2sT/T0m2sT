@@ -312,8 +312,8 @@ text{font-family:'JBMono', ui-monospace, 'SF Mono', Consolas, monospace;fill:#ea
     <g transform="translate(580, 28)">
       <!-- GH-MONTHSTAT:BEGIN -->
 <text x="0" y="0" text-anchor="end" class="muted" style="font-size:11.5px;letter-spacing:.05em">NOV</text>
-<text x="0" y="30" text-anchor="end" class="big-num" style="font-size:30px;font-weight:800">20</text>
-<text x="0" y="51" text-anchor="end" class="accent" style="font-size:12.5px;font-weight:700">1.2% of total ▲</text>
+<text x="0" y="30" text-anchor="end" class="big-num" style="font-size:30px;font-weight:800">39</text>
+<text x="0" y="51" text-anchor="end" class="accent" style="font-size:12.5px;font-weight:700">2.3% of total ▲</text>
 <!-- GH-MONTHSTAT:END -->
     </g>
     <g transform="translate(20, 78)">
@@ -352,8 +352,8 @@ text{font-family:'JBMono', ui-monospace, 'SF Mono', Consolas, monospace;fill:#ea
       <stop offset="100%" stop-color="#ff7a2e" stop-opacity="0"/>
     </linearGradient>
   </defs>
-  <polygon class="areafade" points="0.0,198.0 19.3,198.0 38.6,198.0 57.9,194.3 77.2,194.3 96.6,141.4 115.9,90.3 135.2,90.3 154.5,90.3 173.8,84.8 193.1,84.8 212.4,84.8 231.7,84.8 251.0,84.8 270.3,84.8 289.7,84.8 309.0,84.8 328.3,83.0 347.6,83.0 366.9,81.2 386.2,81.2 405.5,77.5 424.8,77.5 444.1,73.9 463.4,55.6 482.8,46.5 502.1,46.5 521.4,46.5 540.7,26.4 560.0,10.0 560,202 0,202" fill="url(#activityFill)"/>
-  <polyline class="draw" pathLength="1" points="0.0,198.0 19.3,198.0 38.6,198.0 57.9,194.3 77.2,194.3 96.6,141.4 115.9,90.3 135.2,90.3 154.5,90.3 173.8,84.8 193.1,84.8 212.4,84.8 231.7,84.8 251.0,84.8 270.3,84.8 289.7,84.8 309.0,84.8 328.3,83.0 347.6,83.0 366.9,81.2 386.2,81.2 405.5,77.5 424.8,77.5 444.1,73.9 463.4,55.6 482.8,46.5 502.1,46.5 521.4,46.5 540.7,26.4 560.0,10.0" fill="none" stroke="#ff7a2e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon class="areafade" points="0.0,198.0 19.3,198.0 38.6,198.0 57.9,194.9 77.2,194.9 96.6,150.2 115.9,107.1 135.2,107.1 154.5,107.1 173.8,102.5 193.1,102.5 212.4,102.5 231.7,102.5 251.0,102.5 270.3,102.5 289.7,102.5 309.0,102.5 328.3,100.9 347.6,100.9 366.9,99.4 386.2,99.4 405.5,96.3 424.8,96.3 444.1,93.2 463.4,77.8 482.8,70.1 502.1,70.1 521.4,70.1 540.7,53.1 560.0,10.0 560,202 0,202" fill="url(#activityFill)"/>
+  <polyline class="draw" pathLength="1" points="0.0,198.0 19.3,198.0 38.6,198.0 57.9,194.9 77.2,194.9 96.6,150.2 115.9,107.1 135.2,107.1 154.5,107.1 173.8,102.5 193.1,102.5 212.4,102.5 231.7,102.5 251.0,102.5 270.3,102.5 289.7,102.5 309.0,102.5 328.3,100.9 347.6,100.9 366.9,99.4 386.2,99.4 405.5,96.3 424.8,96.3 444.1,93.2 463.4,77.8 482.8,70.1 502.1,70.1 521.4,70.1 540.7,53.1 560.0,10.0" fill="none" stroke="#ff7a2e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
   <circle class="pop" cx="560" cy="10" r="4" fill="#ff7a2e"/>
   <circle class="pop" cx="560" cy="10" r="8" fill="#ff7a2e" opacity="0.25"/>
 </svg>
@@ -368,7 +368,7 @@ text{font-family:'JBMono', ui-monospace, 'SF Mono', Consolas, monospace;fill:#ea
     <!-- GH-STREAK:BEGIN -->
 <g transform="translate(580, 28)">
 <text text-anchor="end" y="0" class="muted" style="font-size:11.5px;letter-spacing:.05em">ALL-TIME</text>
-<text text-anchor="end" y="30" class="big-num" style="font-size:30px;font-weight:700">1,687</text>
+<text text-anchor="end" y="30" class="big-num" style="font-size:30px;font-weight:700">1,706</text>
 <text text-anchor="end" y="51" class="accent" style="font-size:12.5px;font-weight:700">11d best streak</text>
 </g>
 <g transform="translate(20, 80)">
@@ -395,7 +395,7 @@ text{font-family:'JBMono', ui-monospace, 'SF Mono', Consolas, monospace;fill:#ea
 <g class="candle" style="animation-delay:1.00s"><line x1="475.3" y1="84.5" x2="475.3" y2="139.0" stroke="#3ddc84" stroke-width="1.5"/><rect x="466.7" y="138.3" width="17.3" height="1.5" rx="1" fill="#3ddc84"/></g>
 <g class="candle" style="animation-delay:1.04s"><line x1="498.7" y1="133.4" x2="498.7" y2="139.0" stroke="#ff5c5c" stroke-width="1.5"/><rect x="490.0" y="133.4" width="17.3" height="5.6" rx="1" fill="#ff5c5c"/></g>
 <g class="candle" style="animation-delay:1.07s"><line x1="522.0" y1="135.2" x2="522.0" y2="139.0" stroke="#3ddc84" stroke-width="1.5"/><rect x="513.3" y="138.3" width="17.3" height="1.5" rx="1" fill="#3ddc84"/></g>
-<g class="candle" style="animation-delay:1.10s"><line x1="545.3" y1="118.3" x2="545.3" y2="139.0" stroke="#3ddc84" stroke-width="1.5"/><rect x="536.7" y="122.1" width="17.3" height="13.1" rx="1" fill="#3ddc84"/></g>
+<g class="candle" style="animation-delay:1.10s"><line x1="545.3" y1="86.4" x2="545.3" y2="139.0" stroke="#3ddc84" stroke-width="1.5"/><rect x="536.7" y="86.4" width="17.3" height="48.8" rx="1" fill="#3ddc84"/></g>
 </g>
 <!-- GH-STREAK:END -->
   </g>
@@ -410,7 +410,7 @@ text{font-family:'JBMono', ui-monospace, 'SF Mono', Consolas, monospace;fill:#ea
 <text x="0" y="50" class="stat-key" style="font-size:16px">Pull Requests</text><text x="430" y="50" text-anchor="end" style="font-size:18px;font-weight:700">16</text>
 <rect x="-6" y="56" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="80" class="stat-key" style="font-size:16px">Issues</text><text x="430" y="80" text-anchor="end" style="font-size:18px;font-weight:700">0</text>
 <text x="0" y="110" class="stat-key" style="font-size:16px">Repos Touched</text><text x="430" y="110" text-anchor="end" style="font-size:18px;font-weight:700">25</text>
-<rect x="-6" y="116" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="140" class="stat-key" style="font-size:16px">Lines</text><text x="430" y="140" text-anchor="end" style="font-size:18px;font-weight:700">224,390 <tspan dx="-3" style="font-size:16px">(<tspan fill="#3ddc84">270,473++</tspan>, <tspan fill="#ff5c5c">46,083--</tspan>)</tspan></text>
+<rect x="-6" y="116" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="140" class="stat-key" style="font-size:16px">Lines</text><text x="430" y="140" text-anchor="end" style="font-size:18px;font-weight:700">224,387 <tspan dx="-3" style="font-size:16px">(<tspan fill="#3ddc84">270,548++</tspan>, <tspan fill="#ff5c5c">46,161--</tspan>)</tspan></text>
 <text x="0" y="170" class="stat-key" style="font-size:16px">Rank</text><text x="430" y="170" text-anchor="end" style="font-size:18px;font-weight:700">A+</text>
 <!-- GH-STATS:END -->
     </g>
