@@ -8,7 +8,7 @@ const PILL_FONTS = fontCss("mono700");
 
 // ---- hero ---------------------------------------------------------------
 // Motion (all on load, ends in the final state; ambient glow is the only loop):
-// The rule spans the name (measured: x=60..823 at 78px); if the name or size changes, update M62..H821 and the 759 dash length.
+// The rule spans the word "Pedro" only (measured: x=60..277 at 78px); if the name or size changes, update M62..H275 and the 213 dash length.
 //  1. name rises out of a clip box   2. accent line draws
 //  3. bio lines fade up              4. glow drifts slowly
 // Under prefers-reduced-motion every animation is off and the final frame shows.
@@ -22,14 +22,14 @@ ${HERO_FONTS}
 .bio{font-family:${SANS};font-weight:500;font-size:18px;fill:${C.bio}}
 .sub{font-family:${MONO};font-weight:500;font-size:13px;letter-spacing:.02em;fill:${C.mute}}
 .card{fill:url(#bg);stroke:${C.line}}
-.rule{stroke:${C.accent};stroke-width:4;stroke-linecap:round;fill:none;stroke-dasharray:759;stroke-dashoffset:0}
+.rule{stroke:${C.accent};stroke-width:4;stroke-linecap:round;fill:none;stroke-dasharray:213;stroke-dashoffset:0}
 .rise{animation:rise 1s cubic-bezier(.16,1,.3,1) .15s both}
-.draw{animation:draw 1.2s cubic-bezier(.16,1,.3,1) .85s both}
+.draw{animation:draw .9s cubic-bezier(.16,1,.3,1) .85s both}
 .fade1{animation:fade .9s cubic-bezier(.16,1,.3,1) 1.0s both}
 .fade2{animation:fade .9s cubic-bezier(.16,1,.3,1) 1.2s both}
 .glow{animation:drift 16s ease-in-out infinite alternate}
 @keyframes rise{from{transform:translateY(96px)}to{transform:translateY(0)}}
-@keyframes draw{from{stroke-dashoffset:759}to{stroke-dashoffset:0}}
+@keyframes draw{from{stroke-dashoffset:213}to{stroke-dashoffset:0}}
 @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes drift{from{transform:translateX(-90px)}to{transform:translateX(120px)}}
 @media (prefers-reduced-motion:reduce){.rise,.draw,.fade1,.fade2,.glow{animation:none}}
@@ -45,7 +45,7 @@ ${cardGradient("bg")}
 <rect x="20.5" y="20.5" width="959" height="229" rx="16" class="card"/>
 <g clip-path="url(#card)"><ellipse class="glow" cx="760" cy="40" rx="360" ry="150" fill="url(#g)"/></g>
 <g clip-path="url(#nameBox)"><g class="rise"><text class="name" x="60" y="124">Pedro Tomás <tspan class="last">Teixeira</tspan></text></g></g>
-<path class="rule draw" d="M62 150 H821"/>
+<path class="rule draw" d="M62 150 H275"/>
 <text class="bio fade1" x="60" y="192">Student of LEIC@FEUP, ACM FEUP Vice President (Internal) &amp; Head of Cybersecurity Department.</text>
 <text class="sub fade2" x="60" y="222">Some of my work pinned below.</text>
 </svg>
