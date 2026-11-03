@@ -150,6 +150,7 @@ projects.forEach((p, i) => {
   [14, 27, 40].forEach((dx) => (b += `<circle cx="${FX + dx}" cy="${y + 13}" r="3.5" fill="${C.mute}" opacity=".5"/>`));
   b += `<text x="${FX + 58}" y="${y + 17}" class="m" style="font-size:9.5px">github.com/${OWNER}/${p.repo}</text>`;
   b += bannerImg(p, `M${FX} ${y + FH - 10} V${y + BAR} H${FX + FW} V${y + FH - 10} A10 10 0 0 1 ${FX + FW - 10} ${y + FH} H${FX + 10} A10 10 0 0 1 ${FX} ${y + FH - 10} Z`, FX, y + BAR, FW, FH - BAR);
+  b += `<rect x="${FX + .5}" y="${y + .5}" width="${FW - 1}" height="${FH - 1}" rx="10" fill="none" stroke="${C.line}"/>`; // border over the screenshot too
   b += `<clipPath id="fc"><path d="${rr(FX, y, FW, FH, 10)}"/></clipPath><g clip-path="url(#fc)"><polygon class="fsheen" points="${FX + 40},${y} ${FX + 190},${y} ${FX + 150},${y + FH} ${FX},${y + FH}" fill="url(#sheenGrad)"/></g>`;
   const tx = FX + FW + 32;
   b += `<text x="${tx}" y="${y + 36}" class="t" style="font-size:30px">${esc(p.title)}</text>`;
