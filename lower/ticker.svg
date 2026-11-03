@@ -16,7 +16,7 @@ text{font-family:'JBMono', ui-monospace, 'SF Mono', Consolas, monospace;fill:#ea
 .sheen{animation:sheen 9s ease-in-out infinite}
 .fsheen{animation:fsheen 9s ease-in-out infinite}
 @keyframes sheen{0%,62%{transform:translateX(-320px)}100%{transform:translateX(1100px)}}
-@keyframes fsheen{0%,62%{transform:translateX(-200px)}100%{transform:translateX(430px)}}
+@keyframes fsheen{0%,62%{transform:translateX(-200px)}100%{transform:translateX(900px)}}
 @keyframes tl{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
 @keyframes blink{50%{opacity:0}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important}.sheen,.fsheen{display:none}}
