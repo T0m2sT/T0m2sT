@@ -313,7 +313,7 @@ text{font-family:'JBMono', ui-monospace, 'SF Mono', Consolas, monospace;fill:#ea
       <!-- GH-MONTHSTAT:BEGIN -->
 <text x="0" y="0" text-anchor="end" class="muted" style="font-size:11.5px;letter-spacing:.05em">NOV</text>
 <text x="0" y="30" text-anchor="end" class="big-num" style="font-size:30px;font-weight:800">56</text>
-<text x="0" y="51" text-anchor="end" class="accent" style="font-size:12.5px;font-weight:700">3.3% of total ▲</text>
+<text x="0" y="51" text-anchor="end" class="accent" style="font-size:12.5px;font-weight:700">3.2% of total ▲</text>
 <!-- GH-MONTHSTAT:END -->
     </g>
     <g transform="translate(20, 78)">
@@ -352,8 +352,8 @@ text{font-family:'JBMono', ui-monospace, 'SF Mono', Consolas, monospace;fill:#ea
       <stop offset="100%" stop-color="#ff7a2e" stop-opacity="0"/>
     </linearGradient>
   </defs>
-  <polygon class="areafade" points="0.0,198.0 19.3,198.0 38.6,195.3 57.9,195.3 77.2,156.1 96.6,118.2 115.9,118.2 135.2,118.2 154.5,114.1 173.8,114.1 193.1,114.1 212.4,114.1 231.7,114.1 251.0,114.1 270.3,114.1 289.7,114.1 309.0,112.8 328.3,112.8 347.6,111.4 366.9,111.4 386.2,108.7 405.5,108.7 424.8,106.0 444.1,92.5 463.4,85.7 482.8,85.7 502.1,85.7 521.4,70.9 540.7,10.0 560.0,10.0 560,202 0,202" fill="url(#activityFill)"/>
-  <polyline class="draw" pathLength="1" points="0.0,198.0 19.3,198.0 38.6,195.3 57.9,195.3 77.2,156.1 96.6,118.2 115.9,118.2 135.2,118.2 154.5,114.1 173.8,114.1 193.1,114.1 212.4,114.1 231.7,114.1 251.0,114.1 270.3,114.1 289.7,114.1 309.0,112.8 328.3,112.8 347.6,111.4 366.9,111.4 386.2,108.7 405.5,108.7 424.8,106.0 444.1,92.5 463.4,85.7 482.8,85.7 502.1,85.7 521.4,70.9 540.7,10.0 560.0,10.0" fill="none" stroke="#ff7a2e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon class="areafade" points="0.0,198.0 19.3,195.3 38.6,195.3 57.9,156.1 77.2,118.2 96.6,118.2 115.9,118.2 135.2,114.1 154.5,114.1 173.8,114.1 193.1,114.1 212.4,114.1 231.7,114.1 251.0,114.1 270.3,114.1 289.7,112.8 309.0,112.8 328.3,111.4 347.6,111.4 366.9,108.7 386.2,108.7 405.5,106.0 424.8,92.5 444.1,85.7 463.4,85.7 482.8,85.7 502.1,70.9 521.4,10.0 540.7,10.0 560.0,10.0 560,202 0,202" fill="url(#activityFill)"/>
+  <polyline class="draw" pathLength="1" points="0.0,198.0 19.3,195.3 38.6,195.3 57.9,156.1 77.2,118.2 96.6,118.2 115.9,118.2 135.2,114.1 154.5,114.1 173.8,114.1 193.1,114.1 212.4,114.1 231.7,114.1 251.0,114.1 270.3,114.1 289.7,112.8 309.0,112.8 328.3,111.4 347.6,111.4 366.9,108.7 386.2,108.7 405.5,106.0 424.8,92.5 444.1,85.7 463.4,85.7 482.8,85.7 502.1,70.9 521.4,10.0 540.7,10.0 560.0,10.0" fill="none" stroke="#ff7a2e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
   <circle class="pop" cx="560" cy="10" r="4" fill="#ff7a2e"/>
   <circle class="pop" cx="560" cy="10" r="8" fill="#ff7a2e" opacity="0.25"/>
 </svg>
