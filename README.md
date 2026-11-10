@@ -5,7 +5,7 @@
      (built by .github/scripts/build-lower.mjs). -->
 <p align="center">
 <a href="https://github.com/T0m2sT"><img alt="Pedro Tomás Teixeira. Student of LEIC@FEUP, ACM FEUP Vice President (Internal) and Head of Cybersecurity Department. Some of my work pinned below." src="./hero/hero.svg" width="100%"></a>
-<a href="https://www.linkedin.com/in/pedrotomasteixeira/"><img alt="LinkedIn" src="./hero/linkedin.svg" height="48"></a>&nbsp;&nbsp;<a href="https://drive.google.com/file/d/1yY0Kwl3yaYo2QgKXT7AtNvGq_8rIR0Rx/view?usp=sharing"><img alt="CV" src="./hero/cv.svg" height="48"></a>
+<a href="https://www.linkedin.com/in/pedrotomasteixeira/" target="_blank"><img alt="LinkedIn" src="./hero/linkedin.svg" height="48"></a>&nbsp;&nbsp;<a href="https://drive.google.com/file/d/1yY0Kwl3yaYo2QgKXT7AtNvGq_8rIR0Rx/view?usp=sharing" target="_blank"><img alt="CV" src="./hero/cv.svg" height="48"></a>
 </p>
 
 <p align="center">
