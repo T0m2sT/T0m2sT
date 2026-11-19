@@ -187,10 +187,10 @@ async function buildStatsLedger(username, width) {
 
   const grab = (testid) => {
     const m = raw.match(new RegExp(`data-testid="${testid}"[^>]*>\\s*([^<]+?)\\s*<`));
-    return m ? m[1].trim() : "—";
+    return m ? m[1].trim() : "-";
   };
   const rankMatch = raw.match(/class="rank-text">[\s\S]*?<text[^>]*>\s*([^<]+?)\s*<\/text>/);
-  const rank = rankMatch ? rankMatch[1].trim() : "—";
+  const rank = rankMatch ? rankMatch[1].trim() : "-";
   const { loc, ownRepos } = await buildLinesOfCode(username);
 
   const externalContribs = await fetchExternalContribRepos(username);
@@ -201,7 +201,7 @@ async function buildStatsLedger(username, width) {
     ["Pull Requests", grab("prs")],
     ["Issues", grab("issues")],
     ["Repos Touched", contribs],
-    ["Lines", loc || "—"],
+    ["Lines", loc || "-"],
     ["Rank", rank],
   ];
 
@@ -230,9 +230,9 @@ async function buildContributionsQuote(username) {
 
   const grabAfter = (comment) => {
     const idx = raw.indexOf(comment);
-    if (idx === -1) return "—";
+    if (idx === -1) return "-";
     const m = raw.slice(idx).match(/<text[^>]*>\s*([\s\S]*?)\s*<\/text>/);
-    return m ? m[1].trim() : "—";
+    return m ? m[1].trim() : "-";
   };
   const longest = grabAfter("<!-- Longest Streak big number -->");
 
@@ -403,7 +403,7 @@ async function buildProjectCard(username, spec) {
   if (!repoData) return null;
 
   const langs = await fetchTopLanguages(username, spec.repo);
-  const tags = langs.length ? langs : [repoData.language || "—"];
+  const tags = langs.length ? langs : [repoData.language || "-"];
   const totalCommits = await fetchTotalCommits(username, spec.repo);
 
   let additions = 0;
@@ -437,7 +437,7 @@ async function buildProjectCard(username, spec) {
   y += 24;
   body += `<text x="${PAD}" y="${y}" class="cta">View project →</text>`;
   y += 18;
-  const commitsStr = totalCommits != null ? `${totalCommits} commits` : "— commits";
+  const commitsStr = totalCommits != null ? `${totalCommits} commits` : "- commits";
   const locStr = additions >= 1000 ? `${(additions / 1000).toFixed(1)}K` : String(additions);
   body += `<text x="${PAD}" y="${y}" class="muted" style="font-size:9.5px">${commitsStr} · ${locStr} loc · updated ${relativeTime(repoData.pushed_at)}</text>`;
   const h = y + 20;
