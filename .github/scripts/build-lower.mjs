@@ -90,8 +90,7 @@ text{font-family:${MONO};fill:${C.ink}}
 .tl{animation:tl .5s ease-out both}
 .cursor{fill:${C.accent};animation:blink 1.1s steps(1) infinite}
 @keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.sheen{animation:sheen 9s ease-in-out infinite}
-.fsheen{animation:fsheen 9s ease-in-out infinite}
+.sheen,.fsheen{display:none}
 @keyframes sheen{0%,62%{transform:translateX(-320px)}100%{transform:translateX(1100px)}}
 @keyframes fsheen{0%,62%{transform:translateX(-200px)}100%{transform:translateX(430px)}}
 @keyframes tl{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
@@ -121,15 +120,15 @@ const FRAME = "#1d2d4c"; // C.line blended on navy: an opaque twin so the border
 const T = 96, X = 90, RH = 220, FX = 122, FW = 400, FH = 191, BAR = 26; // image area 400x165 = 2.43:1, the banners' ratio, so screenshots show whole
 const E0 = T + 114, EEND = E0 + projects.length * RH, SY = EEND + 20;
 const H = SY + 24 + 2 * 34 + 70;
-const termCard = `<path d="${rr(20, T, 960, H - T - 20, 16)}" class="card" filter="url(#glow)"/>`;
+const termCard = `<path d="${rr(20, T, 960, H - T - 20, 16)}" class="card"/>`;
 
 // ticker: three copies, slide exactly one copy (mono advance .6em + .04em spacing) so the loop never jumps
-const SEP = "      ·      ";
-const run = stats.map(([k, v]) => `${k.toUpperCase()}  ${v}${k === "Lines" ? `  (+${add} / -${del})` : ""}`).join(SEP) + SEP;
-const richRun = stats.map(([k, v]) => `${esc(`${k.toUpperCase()}  ${v}`)}${k === "Lines" ? `  (<tspan class="g">+${esc(add)}</tspan> / <tspan class="r">-${esc(del)}</tspan>)` : ""}`).join(SEP) + SEP;
-const tw = [...run].length * 13 * 0.64;
-slice("ticker", 10, 86, `.tick{animation:tick 26s linear infinite}@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-${tw.toFixed(2)}px)}}`,
-  `<g ${IN(0.1)}><rect x="20.5" y="20.5" width="959" height="55" rx="16" class="card" filter="url(#glow)"/><clipPath id="tk"><rect x="21" y="21" width="958" height="54" rx="15"/></clipPath><g clip-path="url(#tk)"><g class="tick"><text x="0" y="55" class="b" xml:space="preserve" style="font-size:13px;letter-spacing:.04em;white-space:pre">${richRun + richRun + richRun}</text></g><polygon class="sheen" points="14,21 164,21 150,75 0,75" fill="url(#sheenGrad)"/></g></g>`,
+const SEP = "   ·   ";
+const statLabel = (k) => (k === "Repos touched" ? "Repos" : k);
+const run = stats.map(([k, v]) => `${statLabel(k).toUpperCase()}  ${v}${k === "Lines" ? `  (+${add} / -${del})` : ""}`).join(SEP);
+const richRun = stats.map(([k, v]) => `${esc(`${statLabel(k).toUpperCase()}  ${v}`)}${k === "Lines" ? `  (<tspan class="g">+${esc(add)}</tspan> / <tspan class="r">-${esc(del)}</tspan>)` : ""}`).join(SEP);
+slice("ticker", 10, 86, `.tick{animation:none}`,
+  `<g ${IN(0.1)}><rect x="20.5" y="20.5" width="959" height="55" rx="16" class="card"/><clipPath id="tk"><rect x="21" y="21" width="958" height="54" rx="15"/></clipPath><g clip-path="url(#tk)"><g class="tick"><text x="500" y="55" text-anchor="middle" class="b" xml:space="preserve" style="font-size:13px;letter-spacing:.04em;white-space:pre">${richRun}</text></g></g></g>`,
   `GitHub stats: ${stats.map(([k, v]) => `${k} ${v}`).join(", ")}, lines +${add} -${del}`, ["mono700"]);
 
 const dots = [44, 60, 76].map((x) => `<circle cx="${x}" cy="${T + 21}" r="4.5" fill="${C.mute}" opacity=".5"/>`).join("");

@@ -476,7 +476,7 @@ ${fontCss("sans800", "sans500", "mono500")}
   <clipPath id="imgClip"><path d="M0 14 a14 14 0 0 1 14 -14 h${CW - 28} a14 14 0 0 1 14 14 v${IMG_H - 14} h-${CW} z"/></clipPath>
 </defs>
 <g transform="translate(${GP}, ${GP})">
-<rect x="0.5" y="0.5" width="${CW - 1}" height="${h - 1}" rx="14" class="card-bg" filter="url(#cardGlow)"/>
+<rect x="0.5" y="0.5" width="${CW - 1}" height="${h - 1}" rx="14" class="card-bg"/>
 ${body}
 <g clip-path="url(#cardClip)"><polygon class="sheen" points="40,0 190,0 150,${h} 0,${h}" fill="url(#sheenGrad)"/></g>
 </g>
@@ -613,7 +613,7 @@ text{font-family:${MONO};fill:${C.ink}}
 .accent{fill:${C.accent}}
 .big-num{fill:${C.ink}}
 .card-glow{flood-color:${C.glow};flood-opacity:.16}
-.scan{animation:scan 7s linear infinite}
+.scan{display:none}
 .candle{transform-box:fill-box;transform-origin:50% 100%;animation:grow .7s cubic-bezier(.16,1,.3,1) both}
 .draw{stroke-dasharray:1;stroke-dashoffset:0;animation:draw 1.4s cubic-bezier(.16,1,.3,1) .2s both}
 .areafade{animation:fadein 1.4s ease .5s both}

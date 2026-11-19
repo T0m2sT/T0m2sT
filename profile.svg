@@ -21,7 +21,7 @@ text{font-family:'JBMono', ui-monospace, 'SF Mono', Consolas, monospace;fill:#ea
 .accent{fill:#ff7a2e}
 .big-num{fill:#eaf3ff}
 .card-glow{flood-color:#4f8cff;flood-opacity:.16}
-.scan{animation:scan 7s linear infinite}
+.scan{display:none}
 .candle{transform-box:fill-box;transform-origin:50% 100%;animation:grow .7s cubic-bezier(.16,1,.3,1) both}
 .draw{stroke-dasharray:1;stroke-dashoffset:0;animation:draw 1.4s cubic-bezier(.16,1,.3,1) .2s both}
 .areafade{animation:fadein 1.4s ease .5s both}
@@ -409,7 +409,7 @@ text{font-family:'JBMono', ui-monospace, 'SF Mono', Consolas, monospace;fill:#ea
 <rect x="-6" y="-4" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="20" class="stat-key" style="font-size:16px">Total Stars</text><text x="430" y="20" text-anchor="end" style="font-size:18px;font-weight:700">2</text>
 <text x="0" y="50" class="stat-key" style="font-size:16px">Pull Requests</text><text x="430" y="50" text-anchor="end" style="font-size:18px;font-weight:700">26</text>
 <rect x="-6" y="56" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="80" class="stat-key" style="font-size:16px">Issues</text><text x="430" y="80" text-anchor="end" style="font-size:18px;font-weight:700">0</text>
-<text x="0" y="110" class="stat-key" style="font-size:16px">Repos Touched</text><text x="430" y="110" text-anchor="end" style="font-size:18px;font-weight:700">24</text>
+<text x="0" y="110" class="stat-key" style="font-size:16px">Repos Touched</text><text x="430" y="110" text-anchor="end" style="font-size:18px;font-weight:700">27</text>
 <rect x="-6" y="116" width="442" height="30" rx="6" class="row-stripe"/><text x="0" y="140" class="stat-key" style="font-size:16px">Lines</text><text x="430" y="140" text-anchor="end" style="font-size:18px;font-weight:700">246,123 <tspan dx="-3" style="font-size:16px">(<tspan fill="#3ddc84">292,622++</tspan>, <tspan fill="#ff5c5c">46,499--</tspan>)</tspan></text>
 <text x="0" y="170" class="stat-key" style="font-size:16px">Rank</text><text x="430" y="170" text-anchor="end" style="font-size:18px;font-weight:700">B-</text>
 <!-- GH-STATS:END -->
